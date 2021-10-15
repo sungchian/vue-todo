@@ -77,6 +77,7 @@ export default new Vuex.Store({
     // UPDATE_TODO ({ commit }, { tId, todo }) {
     UPDATE_TODO ({ commit, state }, { tId, content }) {
       // 1. PATCH axios.patch()
+      //下面這行意思是如果沒改動就直接return
       if (state.todos[tId].content === content) return
       console.log('API')
       const todos = STORE.load()
