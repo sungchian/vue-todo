@@ -20,5 +20,10 @@ npm run build
 npm run lint
 ```
 
+### Git commit bypass
+```
+git commit -m '' -n
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
