@@ -5,11 +5,17 @@ import LocalStorage from '../modules/LocalStorage'
 Vue.use(Vuex)
 
 const STORE = LocalStorage('todo-vue')
+// const STORE = new LocalStorage('todo-vue')
+//上下兩行是一樣的
 
+//因為是讀localStorage的資料所以要再console.log打上
+//window.localStorage.setItem('todo-vue', JSON.stringify([{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]))
+//可用$vm0.$store.dispatch('READ_TODOS').then((res) => {console.log(res)})
+//找尋有沒有成功輸入
 export default new Vuex.Store({
   state: {
-    todos: [{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]
-    // todos: []
+    // todos: [{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]
+    todos: []
   },
   getters: {
     list (state) {
@@ -79,7 +85,7 @@ export default new Vuex.Store({
       // 1. PATCH axios.patch()
       //下面這行意思是如果沒改動就直接return
       if (state.todos[tId].content === content) return
-      console.log('API')
+      console.log('API running...')
       const todos = STORE.load()
       // todos.splice(tId, 1, todo)
       todos[tId].content = content

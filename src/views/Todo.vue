@@ -4,8 +4,8 @@
     <router-link to="/todo" replace>All</router-link>｜
     <router-link to="/todo?filter=active" replace>Active</router-link>｜
     <router-link :to="{ name: 'Todo', query:{ filter: 'done'} }" replace>Done</router-link>
-    <p>show: {{ filter }}</p>
-    <div>{{ list }}</div>
+    <!-- <p>show: {{ filter }}</p>
+    <div>{{ list }}</div> -->
     <ul>
       <!-- <li v-for="item of list" :key="item.tid+''+item.todo.content">
         <template v-if="edit!==item.tId">
@@ -15,7 +15,7 @@
           <input type="text" v-model="item.todo.content">
         </template>  
       </li> -->
-      <!-- <TodoItem
+      <TodoItem
         v-for="item of list"
         :key="item.tId+''+item.todo.content"
         :todo="item.todo"
@@ -23,7 +23,7 @@
         @check="value => checkHandler(item.tId,value)"
         @editThis="edit = item.tId"
         @editComplete="value => editCompleteHandler(item.tId,value)"
-      /> -->
+      />
     </ul>
   </div>
 </template>
@@ -37,9 +37,9 @@ export default {
       edit: null
     }
   },
-  // mounted () {
-  //   this.$store.dispatch('READ_TODOS')
-  // },
+  mounted () {
+    this.$store.dispatch('READ_TODOS')
+  },
   computed: {
     list () {
       return this.$store.getters.filterList(this.filter)
