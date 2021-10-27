@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Todo from '../views/Todo.vue'
+import LeafMap from '../views/LeafMap.vue'
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,11 @@ const routes = [
     path: '/todo',
     name: 'Todo',
     component: Todo
+  },
+  {
+    path: '/leafmap',
+    name: 'LeafMap',
+    component: LeafMap
   },
 ]
 

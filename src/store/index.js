@@ -85,7 +85,7 @@ export default new Vuex.Store({
       // 1. PATCH axios.patch()
       //下面這行意思是如果沒改動就直接return
       if (state.todos[tId].content === content) return
-      console.log('API running...')
+      console.log('API is running...')
       const todos = STORE.load()
       // todos.splice(tId, 1, todo)
       todos[tId].content = content
