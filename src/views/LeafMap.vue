@@ -18,24 +18,6 @@
 <template>
   <div id="map">
     <button type="button" @click="show = !show">show = {{ show }}</button>
-    <div class="col-md-4">
-      <div class="mb-3">
-        <label for="cityName" class="form-label">選擇城市</label>
-        <select class="form-select" id="cityName" aria-label="選擇城市">
-        </select>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="mb-3">
-        <label for="bikeRoute" class="form-label">選擇自行車道</label>
-        <select
-          class="form-select"
-          id="bikeRoute"
-          aria-label="選擇自行車道下拉選單"
-        >
-        </select>
-      </div>
-    </div>
     <CityMenu />
     <Map />
   </div>

@@ -23,7 +23,6 @@ export default new Vuex.Store({
       latitude: 0
     },
     authorization: "",
-    //待開發
     cityData: "",
     //待開發
     currDistrict: "",
@@ -86,10 +85,16 @@ export default new Vuex.Store({
       state.position.longitude = payload.longitude;
     },
     SET_CITY(state, payload){
+      console.log(payload);
       state.cityData = payload;
     },
     SET_STATION_DATA(state, payload) {
       state.bikeStation = payload;
+    },
+    SET_BIKEROUTE_DATA(state, payload) {
+      console.log('SET_BIKEROUTE_DATA...');
+      console.log(payload);
+      state.bikeRoute = payload;
     },
     GetAuthorizationHeader(state) {
       var AppID = "8cea3de491134a68bcafe72fa21e5993";
@@ -243,11 +248,23 @@ export default new Vuex.Store({
               console.log("filterData", state.bikeStation);
 
               // setMarker();
-              commit("SET_STATION_DATA", res.data);
+              commit("SET_STATION_DATA", response.data);
             })
             .catch(error => console.log("error車位資料", error));
         })
         .catch(err => console.log("error租借站位資料", err));
+    },
+    READ_BIKEROUTE_DATA({ commit, state }) {
+      axios({
+        method: "get",
+        url: `https://ptx.transportdata.tw/MOTC/v2/Cycling/Shape/${state.cityData}`,
+        headers: state.authorization
+      })
+        .then((res) => {
+          console.log("自行車的路線", res.data);
+          commit("SET_BIKEROUTE_DATA", res.data);
+        })
+        .catch(err => console.log("error自行車的路線", err));
     }
   }
 });

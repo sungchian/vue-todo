@@ -1,14 +1,33 @@
 <template>
   <div class="city-menu">
-    <label for="cityName" class="form-label">選擇城市</label>
-    <select
-      class="form-select"
-      id="cityName"
-      aria-label="選擇城市"
-      v-model="chooseCity"
-    >
-      <option v-for="c in chooseCity" :key="c.cityEng" :value="c.cityEng">{{ c.city }}</option>
-    </select>
+    <div class="col-md-4">
+      <div class="mb-3">
+        <label for="cityName" class="form-label">選擇城市</label>
+        <select
+          class="form-select"
+          id="cityName"
+          aria-label="選擇城市"
+          v-model="chooseCity"
+        >
+          <option v-for="c in chooseCity" :key="c.cityEng" :value="c.cityEng">{{
+            c.city
+          }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="mb-3">
+        <label for="bikeRoute" class="form-label">選擇自行車道</label>
+        <select
+          class="form-select"
+          id="bikeRoute"
+          aria-label="選擇自行車道下拉選單"
+          v-model="chooseRoute"
+        >
+          <option v-for="(r, index) in chooseRoute" :key="index" :value="r.RouteName">{{ r.RouteName }}</option>
+        </select>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -49,9 +68,26 @@ export default {
         return this.$data.cityName;
       },
       set(val) {
-        return val;
+        store.commit("SET_CITY", val);
       }
-    }
+    },
+    chooseRoute: {
+      get() {
+        return store.state.bikeRoute;
+      },
+      set(val) {
+        // store.commit("SET_BIKEROUTE_DATA", val);
+      }
+    },
+    // displayRoute() {
+    //   store.dispatch('READ_BIKEROUTE_DATA')
+    // }
+  },
+  watch : {
+      chooseCity(newVal) {
+        store.commit('SET_BIKEROUTE_DATA', newVal)
+        store.dispatch('READ_BIKEROUTE_DATA')
+      }
   }
 };
 </script>

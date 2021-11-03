@@ -1,5 +1,8 @@
 <template>
-  <div class="mapid" id="mapid"></div>
+  <div class="map">
+    <button class="showMarker" @click.once="setMarker()">顯示最近的自行車租借站</button>
+    <div class="mapid" id="mapid"></div>
+  </div>
 </template>
 
 <script>
@@ -7,6 +10,15 @@ import L from "leaflet";
 import axios from "axios";
 import jsSHA from "jssha";
 import store from "../store";
+import "leaflet/dist/leaflet.css";
+
+//下列是icon會出不來的解決方案
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+  iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+});
 
 export default {
   name: "Map",
@@ -17,7 +29,7 @@ export default {
     };
   },
   mounted() {
-    console.log('map vue mounted ...');
+    console.log("map vue mounted ...");
     //初始化地圖
     this.map = L.map("mapid", {
       center: [23.5, 121],
@@ -40,30 +52,24 @@ export default {
     //setTimeout 才能取到經緯度
     setTimeout(() => {
       this.map.panTo(
-      new L.LatLng(
-        store.state.position.latitude,
-        store.state.position.longitude
-      )
-    );
+        new L.LatLng(
+          store.state.position.latitude,
+          store.state.position.longitude
+        )
+      );
     }, 100);
-    
   },
   created() {
-    console.log('map vue created ...');
-    // this.map.panTo(
-    //   new L.LatLng(
-    //     store.state.position.latitude,
-    //     store.state.position.longitude
-    //   )
-    // );
+    console.log("map vue created ...");
+
   },
   computed: {
-    // currDistrictInfo() {
-    //   return store.$getters.currDistrictInfo
-    // },
+
   },
   watch: {
     //watch function name must match the computed function name
+  },
+  methods: {
     setMarker: function() {
       store.state.bikeStation.forEach(item => {
         // console.log(item.StationPosition.PositionLon, item.StationPosition.PositionLat)
@@ -71,7 +77,7 @@ export default {
           item.StationPosition.PositionLat,
           item.StationPosition.PositionLon
         ])
-          .addTo(mymap)
+          .addTo(this.map)
           .bindPopup(
             `<div class="card">
             <div class="card-body">
