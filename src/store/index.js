@@ -85,15 +85,13 @@ export default new Vuex.Store({
       state.position.longitude = payload.longitude;
     },
     SET_CITY(state, payload){
-      console.log(payload);
+      // console.log(payload);
       state.cityData = payload;
     },
     SET_STATION_DATA(state, payload) {
       state.bikeStation = payload;
     },
     SET_BIKEROUTE_DATA(state, payload) {
-      console.log('SET_BIKEROUTE_DATA...');
-      console.log(payload);
       state.bikeRoute = payload;
     },
     GetAuthorizationHeader(state) {
@@ -261,7 +259,7 @@ export default new Vuex.Store({
         headers: state.authorization
       })
         .then((res) => {
-          console.log("自行車的路線", res.data);
+          // console.log("自行車的路線", res.data);
           commit("SET_BIKEROUTE_DATA", res.data);
         })
         .catch(err => console.log("error自行車的路線", err));

@@ -84,8 +84,7 @@ export default {
     // }
   },
   watch : {
-      chooseCity(newVal) {
-        store.commit('SET_BIKEROUTE_DATA', newVal)
+      '$store.state.cityData'(newVal) {
         store.dispatch('READ_BIKEROUTE_DATA')
       }
   }
