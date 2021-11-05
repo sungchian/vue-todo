@@ -24,14 +24,10 @@ export default new Vuex.Store({
     },
     authorization: "",
     cityData: "",
-    //待開發
-    currDistrict: "",
-    //location will be delete
-    location: [],
     bikeRoute: [],
     bikeStation: [],
-    //下面應該不需要了
-    bikeParking: [],
+    bikeRouteTargetIndex: [],
+    bikeRouteTarget: []
   },
   getters: {
     list(state) {
@@ -59,7 +55,7 @@ export default new Vuex.Store({
           return todo.todo.done === status;
         });
       };
-    },
+    }
     // filterList1 (state) {
     //   return (filter) => {
 
@@ -68,12 +64,12 @@ export default new Vuex.Store({
     // filterList2: (state) => (filter) => {
 
     // }
-    currDistrictInfo(state) {
-      // 目前所選行政區
-      return (
-        state.cityData
-      );
-    }
+    // currDistrictInfo(state) {
+    //   // 目前所選行政區
+    //   return (
+    //     state.cityData
+    //   );
+    // }
   },
   mutations: {
     SET_TODOS(state, todos) {
@@ -84,8 +80,7 @@ export default new Vuex.Store({
       state.position.latitude = payload.latitude;
       state.position.longitude = payload.longitude;
     },
-    SET_CITY(state, payload){
-      // console.log(payload);
+    SET_CITY(state, payload) {
       state.cityData = payload;
     },
     SET_STATION_DATA(state, payload) {
@@ -93,6 +88,13 @@ export default new Vuex.Store({
     },
     SET_BIKEROUTE_DATA(state, payload) {
       state.bikeRoute = payload;
+    },
+    SET_BIKEROUTE_TARGETINDEX(state, payload) {
+      state.bikeRouteTargetIndex = payload;
+    },
+    SET_BIKEROUTE_TARGET(state, payload) {
+      console.log(payload);
+      state.bikeRouteTarget = payload;
     },
     GetAuthorizationHeader(state) {
       var AppID = "8cea3de491134a68bcafe72fa21e5993";
@@ -205,10 +207,6 @@ export default new Vuex.Store({
         // 2. commit mutation
         console.log(pos);
         commit("SET_POSITION", pos);
-        // 3. return
-        // return {
-        //   pos
-        // };
       });
     },
     READ_AUTHORIZATION({ commit }) {
@@ -217,11 +215,10 @@ export default new Vuex.Store({
     READ_STATION_DATA({ commit, state }) {
       axios({
         method: "get",
-        // url: 'https://ptx.transportdata.tw/MOTC/v2/Bike/Station/Kaohsiung',
         url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Station/NearBy?$spatialFilter=nearby(${state.position.latitude},${state.position.longitude},500)`,
         headers: state.authorization
       })
-        .then((res) => {
+        .then(res => {
           console.log("租借站位資料", res);
           //取得租借站位資料axios
           axios({
@@ -229,11 +226,11 @@ export default new Vuex.Store({
             url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Availability/NearBy?$spatialFilter=nearby(${state.position.latitude},${state.position.longitude},500)`,
             headers: state.authorization
           })
-            .then((response) => {
+            .then(response => {
               console.log("車位資料", response);
               const availableData = response.data;
               // 比對
-              availableData.forEach((availableItem) => {
+              availableData.forEach(availableItem => {
                 res.data.forEach(stationItem => {
                   if (availableItem.StationUID === stationItem.StationUID) {
                     availableItem.StationName = stationItem.StationName;
@@ -258,11 +255,18 @@ export default new Vuex.Store({
         url: `https://ptx.transportdata.tw/MOTC/v2/Cycling/Shape/${state.cityData}`,
         headers: state.authorization
       })
-        .then((res) => {
-          // console.log("自行車的路線", res.data);
+        .then(res => {
+          console.log("自行車的路線", res.data);
           commit("SET_BIKEROUTE_DATA", res.data);
         })
         .catch(err => console.log("error自行車的路線", err));
+    },
+    //這邊我選擇在做一個
+    READ_BIKETARGET_DATA({ commit, state }) {
+      commit(
+        "SET_BIKEROUTE_TARGET",
+        state.bikeRoute[state.bikeRouteTargetIndex]
+      );
     }
   }
 });

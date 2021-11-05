@@ -28,10 +28,8 @@ import "mapbox-gl-leaflet";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "leaflet/dist/leaflet.css";
 import Map from "../components/Map.vue";
-import store from "../store";
 import CityMenu from '../components/cityMenu.vue';
-// import axios from "axios";
-// import jsSHA from "jssha";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default {
   name: "App",

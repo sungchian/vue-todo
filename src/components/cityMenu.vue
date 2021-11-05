@@ -1,5 +1,7 @@
 <template>
   <div class="city-menu">
+      <div class="container">
+      <div class="row">
     <div class="col-md-4">
       <div class="mb-3">
         <label for="cityName" class="form-label">選擇城市</label>
@@ -15,7 +17,7 @@
         </select>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-8">
       <div class="mb-3">
         <label for="bikeRoute" class="form-label">選擇自行車道</label>
         <select
@@ -24,10 +26,11 @@
           aria-label="選擇自行車道下拉選單"
           v-model="chooseRoute"
         >
-          <option v-for="(r, index) in chooseRoute" :key="index" :value="r.RouteName">{{ r.RouteName }}</option>
+          <option v-for="(r, index) in chooseRoute" :key="index" :value="index">{{ index }} - {{ r.RouteName }}</option>
         </select>
       </div>
     </div>
+      </div></div>
   </div>
 </template>
 
@@ -76,7 +79,8 @@ export default {
         return store.state.bikeRoute;
       },
       set(val) {
-        // store.commit("SET_BIKEROUTE_DATA", val);
+        //會拿到index
+        store.commit("SET_BIKEROUTE_TARGETINDEX", val);
       }
     },
     // displayRoute() {
@@ -84,8 +88,12 @@ export default {
     // }
   },
   watch : {
-      '$store.state.cityData'(newVal) {
+      '$store.state.cityData'() {
         store.dispatch('READ_BIKEROUTE_DATA')
+      },
+      '$store.state.bikeRouteTargetIndex'() {
+          console.log('index change');
+        store.dispatch('READ_BIKETARGET_DATA')
       }
   }
 };

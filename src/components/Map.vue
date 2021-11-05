@@ -1,16 +1,22 @@
 <template>
   <div class="map">
-    <button class="showMarker" @click.once="setMarker()">顯示最近的自行車租借站</button>
+    <button
+      type="button"
+      class="showMarker btn btn-outline-primary"
+      @click.once="setMarker()"
+    >
+      顯示最近的自行車租借站
+    </button>
+    <button @click="polyLine()">123</button>
     <div class="mapid" id="mapid"></div>
   </div>
 </template>
 
 <script>
 import L from "leaflet";
-import axios from "axios";
-import jsSHA from "jssha";
 import store from "../store";
 import "leaflet/dist/leaflet.css";
+import Wkt from 'wicket/wicket-gmap3.js';
 
 //下列是icon會出不來的解決方案
 delete L.Icon.Default.prototype._getIconUrl;
@@ -25,7 +31,8 @@ export default {
   data() {
     return {
       //別的地方用不到map，所以不用丟到vuex
-      map: {}
+      map: {},
+      myLayer: null
     };
   },
   mounted() {
@@ -61,11 +68,8 @@ export default {
   },
   created() {
     console.log("map vue created ...");
-
   },
-  computed: {
-
-  },
+  computed: {},
   watch: {
     //watch function name must match the computed function name
   },
@@ -89,6 +93,25 @@ export default {
         </div>`
           );
       });
+    },
+    polyLine: function() {
+      const geometry = store.state.bikeRoute[store.state.bikeRouteTargetIndex].Geometry
+      const wicket = new Wkt.Wkt();
+      const geojsonFeature = wicket.read(geometry).toJson();
+      // 預設樣式
+      // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
+      const myStyle = {
+        color: "#ff0000",
+        weight: 5,
+        opacity: 0.65
+      };
+      this.myLayer = L.geoJSON(geojsonFeature, {
+        style: myStyle
+      }).addTo(this.map);
+
+      this.myLayer.addData(geojsonFeature);
+      // zoom the map to the layer
+      this.map.fitBounds(this.myLayer.getBounds());
     }
   }
 };
