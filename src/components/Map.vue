@@ -1,5 +1,6 @@
 <template>
   <div class="map">
+    <cityMenu v-on:display="polyLine()" />
     <button
       type="button"
       class="showMarker btn btn-outline-primary"
@@ -7,7 +8,6 @@
     >
       顯示最近的自行車租借站
     </button>
-    <button @click="polyLine()">123</button>
     <div class="mapid" id="mapid"></div>
   </div>
 </template>
@@ -16,7 +16,8 @@
 import L from "leaflet";
 import store from "../store";
 import "leaflet/dist/leaflet.css";
-import Wkt from 'wicket/wicket-gmap3.js';
+import Wkt from "wicket/wicket-gmap3.js";
+import cityMenu from "./cityMenu.vue";
 
 //下列是icon會出不來的解決方案
 delete L.Icon.Default.prototype._getIconUrl;
@@ -27,6 +28,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default {
+  components: { cityMenu },
   name: "Map",
   data() {
     return {
@@ -76,7 +78,6 @@ export default {
   methods: {
     setMarker: function() {
       store.state.bikeStation.forEach(item => {
-        // console.log(item.StationPosition.PositionLon, item.StationPosition.PositionLat)
         L.marker([
           item.StationPosition.PositionLat,
           item.StationPosition.PositionLon
@@ -95,15 +96,16 @@ export default {
       });
     },
     polyLine: function() {
-      const geometry = store.state.bikeRoute[store.state.bikeRouteTargetIndex].Geometry
+      const geometry =
+        store.state.bikeRoute[store.state.bikeRouteTargetIndex].Geometry;
       const wicket = new Wkt.Wkt();
       const geojsonFeature = wicket.read(geometry).toJson();
       // 預設樣式
       // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
 
       //先刪除之前的紀錄
-      if(this.myLayer){
-        this.map.removeLayer(this.myLayer)
+      if (this.myLayer) {
+        this.map.removeLayer(this.myLayer);
       }
 
       const myStyle = {

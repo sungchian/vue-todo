@@ -1,24 +1,6 @@
-<!--<template>
-  <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="mb-3">
-            <label for="bikeRoute" class="form-label">選擇自行車道</label>
-            <select class="form-select" id="bikeRoute" aria-label="選擇自行車道下拉選單">          
-            </select>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <div id="mapid"></div>
-        </div>
-      </div>
-    </div>
-</template> -->
-
 <template>
   <div id="map">
-    <button type="button" @click="show = !show">show = {{ show }}</button>
-    <CityMenu />
+    <!-- <button type="button" @click="show = !show">show = {{ show }}</button> -->
     <Map />
   </div>
 </template>
@@ -60,11 +42,7 @@ export default {
   },
   methods: {},
   components: {
-    // MglMap,
-    // MglGeojsonLayer,
-    // MglMarker,
     Map,
-    CityMenu,
   }
 };
 </script>

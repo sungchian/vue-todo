@@ -25,6 +25,7 @@
           id="bikeRoute"
           aria-label="選擇自行車道下拉選單"
           v-model="chooseRoute"
+          @change="displayRoute()"
         >
           <option v-for="(r, index) in chooseRoute" :key="index" :value="index">{{ index }} - {{ r.RouteName }}</option>
         </select>
@@ -83,9 +84,6 @@ export default {
         store.commit("SET_BIKEROUTE_TARGETINDEX", val);
       }
     },
-    // displayRoute() {
-    //   store.dispatch('READ_BIKEROUTE_DATA')
-    // }
   },
   watch : {
       '$store.state.cityData'() {
@@ -94,7 +92,12 @@ export default {
       '$store.state.bikeRouteTargetIndex'() {
           console.log('index change');
         store.dispatch('READ_BIKETARGET_DATA')
-      }
-  }
+      },
+  },
+  methods: {
+      displayRoute() {
+          this.$emit('display')
+      },
+  },
 };
 </script>
