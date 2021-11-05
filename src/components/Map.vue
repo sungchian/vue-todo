@@ -100,6 +100,12 @@ export default {
       const geojsonFeature = wicket.read(geometry).toJson();
       // 預設樣式
       // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
+
+      //先刪除之前的紀錄
+      if(this.myLayer){
+        this.map.removeLayer(this.myLayer)
+      }
+
       const myStyle = {
         color: "#ff0000",
         weight: 5,
