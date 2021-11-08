@@ -96,8 +96,7 @@ export default {
       });
     },
     polyLine: function() {
-      const geometry =
-        store.state.bikeRoute[store.state.bikeRouteTargetIndex].Geometry;
+      const geometry = store.state.bikeRouteTarget.Geometry;
       const wicket = new Wkt.Wkt();
       const geojsonFeature = wicket.read(geometry).toJson();
       // 預設樣式

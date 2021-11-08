@@ -80,6 +80,7 @@ export default new Vuex.Store({
       state.position.latitude = payload.latitude;
       state.position.longitude = payload.longitude;
     },
+    //下面報廢
     SET_CITY(state, payload) {
       state.cityData = payload;
     },
@@ -266,10 +267,10 @@ export default new Vuex.Store({
         .catch(err => console.log("error自行車的路線", err));
     },
     //這邊我選擇在做一個
-    READ_BIKETARGET_DATA({ commit, state }) {
+    READ_BIKETARGET_DATA({ commit, state }, searchCityIndex) {
       commit(
         "SET_BIKEROUTE_TARGET",
-        state.bikeRoute[state.bikeRouteTargetIndex]
+        state.bikeRoute[searchCityIndex]
       );
     }
   }

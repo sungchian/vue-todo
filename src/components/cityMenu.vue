@@ -24,7 +24,7 @@
           class="form-select"
           id="bikeRoute"
           aria-label="選擇自行車道下拉選單"
-          v-model="chooseRoute"
+          v-model="searchCityRoute"
           @change="displayRoute()"
         >
           <option v-for="(r, index) in chooseRoute" :key="index" :value="index">{{ index }} - {{ r.RouteName }}</option>
@@ -43,6 +43,7 @@ export default {
   data() {
     return {
       searchCity: '',
+      searchCityRoute: '',
       cityName: [
         { city: "臺中市", cityEng: "Taichung" },
         { city: "新竹縣", cityEng: "HsinchuCounty" },
@@ -82,6 +83,7 @@ export default {
       },
       set(val) {
         //會拿到index
+        console.log('-----'+val);
         store.commit("SET_BIKEROUTE_TARGETINDEX", val);
       }
     },
@@ -91,13 +93,15 @@ export default {
       searchCity(val){
         store.dispatch('READ_BIKEROUTE_DATA', val)
       },
-      // '$store.state.cityData'() {
-      //   store.dispatch('READ_BIKEROUTE_DATA')
-      // },
-      '$store.state.bikeRouteTargetIndex'() {
-          console.log('index change');
-        store.dispatch('READ_BIKETARGET_DATA')
+      searchCityRoute(val){
+        console.log('++++++'+val);
+        store.dispatch('READ_BIKETARGET_DATA', val)
+        this.$emit('display')
       },
+      // '$store.state.bikeRouteTargetIndex'() {
+      //     console.log('index change');
+      //   store.dispatch('READ_BIKETARGET_DATA')
+      // },
   },
   methods: {
       displayRoute() {
