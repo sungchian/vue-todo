@@ -9,7 +9,7 @@
           class="form-select"
           id="cityName"
           aria-label="選擇城市"
-          v-model="chooseCity"
+          v-model="searchCity"
         >
           <option v-for="c in chooseCity" :key="c.cityEng" :value="c.cityEng">{{
             c.city
@@ -42,6 +42,7 @@ export default {
   name: "cityMenu",
   data() {
     return {
+      searchCity: '',
       cityName: [
         { city: "臺中市", cityEng: "Taichung" },
         { city: "新竹縣", cityEng: "HsinchuCounty" },
@@ -86,9 +87,13 @@ export default {
     },
   },
   watch : {
-      '$store.state.cityData'() {
-        store.dispatch('READ_BIKEROUTE_DATA')
+    //新增的
+      searchCity(val){
+        store.dispatch('READ_BIKEROUTE_DATA', val)
       },
+      // '$store.state.cityData'() {
+      //   store.dispatch('READ_BIKEROUTE_DATA')
+      // },
       '$store.state.bikeRouteTargetIndex'() {
           console.log('index change');
         store.dispatch('READ_BIKETARGET_DATA')

@@ -195,6 +195,10 @@ export default new Vuex.Store({
         todos
       };
     },
+    //test
+    // READ_CITT({commit}){
+    //   commit('SET_CITY', )
+    // },
     //
     READ_POSITION({ commit }) {
       // 1. GET
@@ -249,10 +253,10 @@ export default new Vuex.Store({
         })
         .catch(err => console.log("error租借站位資料", err));
     },
-    READ_BIKEROUTE_DATA({ commit, state }) {
+    READ_BIKEROUTE_DATA({ commit, state }, searchCity) {
       axios({
         method: "get",
-        url: `https://ptx.transportdata.tw/MOTC/v2/Cycling/Shape/${state.cityData}`,
+        url: `https://ptx.transportdata.tw/MOTC/v2/Cycling/Shape/${searchCity}`,
         headers: state.authorization
       })
         .then(res => {
