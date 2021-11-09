@@ -8,6 +8,13 @@
     >
       顯示最近的自行車租借站
     </button>
+    <button
+      type="button"
+      class="showMarker btn btn-outline-warning"
+      @click="HSRroute()"
+    >
+      顯示高鐵路線
+    </button>
     <div class="mapid" id="mapid"></div>
   </div>
 </template>
@@ -116,6 +123,34 @@ export default {
         style: myStyle
       }).addTo(this.map);
 
+      this.myLayer.addData(geojsonFeature);
+      // zoom the map to the layer
+      this.map.fitBounds(this.myLayer.getBounds());
+    },
+    HSRroute: function() {
+      store.dispatch('READ_HSRROUTE_DATA')
+      const geometry = store.state.highSpeedRailwayRoute;
+      const wicket = new Wkt.Wkt();
+      const geojsonFeature = wicket.read(geometry).toJson();
+      // 預設樣式
+      // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
+
+      //先刪除之前的紀錄
+      if (this.myLayer) {
+        this.map.removeLayer(this.myLayer);
+      }
+
+      const myStyle = {
+        color: "#CA4F0F",
+        weight: 5,
+        opacity: 0.65
+      };
+      this.myLayer = L.geoJSON(geojsonFeature, {
+        style: myStyle
+      }).addTo(this.map);
+
+
+  
       this.myLayer.addData(geojsonFeature);
       // zoom the map to the layer
       this.map.fitBounds(this.myLayer.getBounds());

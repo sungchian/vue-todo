@@ -1,37 +1,45 @@
 <template>
   <div class="city-menu">
-      <div class="container">
+    <div class="container">
       <div class="row">
-    <div class="col-md-4">
-      <div class="mb-3">
-        <label for="cityName" class="form-label">選擇城市</label>
-        <select
-          class="form-select"
-          id="cityName"
-          aria-label="選擇城市"
-          v-model="searchCity"
-        >
-          <option v-for="c in chooseCity" :key="c.cityEng" :value="c.cityEng">{{
-            c.city
-          }}</option>
-        </select>
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="cityName" class="form-label">選擇城市</label>
+            <select
+              class="form-select"
+              id="cityName"
+              aria-label="選擇城市"
+              v-model="searchCity"
+            >
+              <option
+                v-for="c in chooseCity"
+                :key="c.cityEng"
+                :value="c.cityEng"
+                >{{ c.city }}</option
+              >
+            </select>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="mb-3">
+            <label for="bikeRoute" class="form-label">選擇自行車道</label>
+            <select
+              class="form-select"
+              id="bikeRoute"
+              aria-label="選擇自行車道下拉選單"
+              v-model="searchCityRoute"
+            >
+              <option
+                v-for="(r, index) in chooseRoute"
+                :key="index"
+                :value="index"
+                >{{ index }} - {{ r.RouteName }}</option
+              >
+            </select>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-md-8">
-      <div class="mb-3">
-        <label for="bikeRoute" class="form-label">選擇自行車道</label>
-        <select
-          class="form-select"
-          id="bikeRoute"
-          aria-label="選擇自行車道下拉選單"
-          v-model="searchCityRoute"
-          @change="displayRoute()"
-        >
-          <option v-for="(r, index) in chooseRoute" :key="index" :value="index">{{ index }} - {{ r.RouteName }}</option>
-        </select>
-      </div>
-    </div>
-      </div></div>
   </div>
 </template>
 
@@ -42,8 +50,8 @@ export default {
   name: "cityMenu",
   data() {
     return {
-      searchCity: '',
-      searchCityRoute: '',
+      searchCity: "",
+      searchCityRoute: "",
       cityName: [
         { city: "臺中市", cityEng: "Taichung" },
         { city: "新竹縣", cityEng: "HsinchuCounty" },
@@ -83,30 +91,20 @@ export default {
       },
       set(val) {
         //會拿到index
-        console.log('-----'+val);
         store.commit("SET_BIKEROUTE_TARGETINDEX", val);
       }
-    },
+    }
   },
-  watch : {
+  watch: {
     //新增的
-      searchCity(val){
-        store.dispatch('READ_BIKEROUTE_DATA', val)
-      },
-      searchCityRoute(val){
-        console.log('++++++'+val);
-        store.dispatch('READ_BIKETARGET_DATA', val)
-        this.$emit('display')
-      },
-      // '$store.state.bikeRouteTargetIndex'() {
-      //     console.log('index change');
-      //   store.dispatch('READ_BIKETARGET_DATA')
-      // },
+    searchCity(val) {
+      store.dispatch("READ_BIKEROUTE_DATA", val);
+    },
+    searchCityRoute(val) {
+      store.dispatch("READ_BIKETARGET_DATA", val);
+      this.$emit("display");
+    }
   },
-  methods: {
-      displayRoute() {
-          this.$emit('display')
-      },
-  },
+  methods: {}
 };
 </script>

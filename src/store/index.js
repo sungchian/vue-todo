@@ -23,11 +23,12 @@ export default new Vuex.Store({
       latitude: 0
     },
     authorization: "",
-    cityData: "",
+    // cityData: "",
     bikeRoute: [],
     bikeStation: [],
-    bikeRouteTargetIndex: [],
-    bikeRouteTarget: []
+    // bikeRouteTargetIndex: [],
+    bikeRouteTarget: [],
+    highSpeedRailwayRoute: [],
   },
   getters: {
     list(state) {
@@ -76,27 +77,6 @@ export default new Vuex.Store({
       console.log(todos);
       state.todos = todos;
     },
-    SET_POSITION(state, payload) {
-      state.position.latitude = payload.latitude;
-      state.position.longitude = payload.longitude;
-    },
-    //下面報廢
-    SET_CITY(state, payload) {
-      state.cityData = payload;
-    },
-    SET_STATION_DATA(state, payload) {
-      state.bikeStation = payload;
-    },
-    SET_BIKEROUTE_DATA(state, payload) {
-      state.bikeRoute = payload;
-    },
-    SET_BIKEROUTE_TARGETINDEX(state, payload) {
-      state.bikeRouteTargetIndex = payload;
-    },
-    SET_BIKEROUTE_TARGET(state, payload) {
-      console.log(payload);
-      state.bikeRouteTarget = payload;
-    },
     GetAuthorizationHeader(state) {
       var AppID = "8cea3de491134a68bcafe72fa21e5993";
       var AppKey = "If3Vm6AAeV8uTS4jzYw1EbOl-94";
@@ -116,7 +96,29 @@ export default new Vuex.Store({
         Authorization: Authorization,
         "X-Date": GMTString /*,'Accept-Encoding': 'gzip'*/
       }); //如果要將js運行在伺服器，可額外加入 'Accept-Encoding': 'gzip'，要求壓縮以減少網路傳輸資料量
-    }
+    },
+    //#region BIKE
+    SET_POSITION(state, payload) {
+      state.position.latitude = payload.latitude;
+      state.position.longitude = payload.longitude;
+    },
+    SET_STATION_DATA(state, payload) {
+      state.bikeStation = payload;
+    },
+    SET_BIKEROUTE_DATA(state, payload) {
+      state.bikeRoute = payload;
+    },
+    SET_BIKEROUTE_TARGETINDEX(state, payload) {
+      state.bikeRouteTargetIndex = payload;
+    },
+    SET_BIKEROUTE_TARGET(state, payload) {
+      console.log(payload);
+      state.bikeRouteTarget = payload;
+    },
+    //#endregion 
+    SET_HSRROUTE_DATA(state, payload){
+      state.highSpeedRailwayRoute = payload
+    },
   },
   actions: {
     CREATE_TODO({ commit }, { todo }) {
@@ -272,6 +274,20 @@ export default new Vuex.Store({
         "SET_BIKEROUTE_TARGET",
         state.bikeRoute[searchCityIndex]
       );
-    }
+    },
+    //high speed railway
+    READ_HSRROUTE_DATA({commit, state}){
+      axios({
+        method: "get",
+        url: `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Shape?$format=JSON`,
+        headers: state.authorization
+      })
+      .then(res => {
+        console.log("高鐵路線", res.data[0].Geometry);
+        commit("SET_HSRROUTE_DATA", res.data[0].Geometry)
+      })
+      .catch(err => console.log("error高鐵的路線", err));
+      
+    },
   }
 });
