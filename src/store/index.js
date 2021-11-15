@@ -18,6 +18,7 @@ export default new Vuex.Store({
   state: {
     // todos: [{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]
     todos: [],
+    loading: false,
     position: {
       longitude: 0,
       latitude: 0
@@ -28,7 +29,8 @@ export default new Vuex.Store({
     bikeStation: [],
     // bikeRouteTargetIndex: [],
     bikeRouteTarget: [],
-    highSpeedRailwayRoute: [],
+    highSpeedRailwayStation: [],
+    highSpeedRailwayRoute: []
   },
   getters: {
     list(state) {
@@ -77,6 +79,9 @@ export default new Vuex.Store({
       console.log(todos);
       state.todos = todos;
     },
+    TOGGLE_LOADING(state, isLoading) {
+      state.loading = isLoading;
+    },
     GetAuthorizationHeader(state) {
       var AppID = "8cea3de491134a68bcafe72fa21e5993";
       var AppKey = "If3Vm6AAeV8uTS4jzYw1EbOl-94";
@@ -112,13 +117,15 @@ export default new Vuex.Store({
       state.bikeRouteTargetIndex = payload;
     },
     SET_BIKEROUTE_TARGET(state, payload) {
-      console.log(payload);
       state.bikeRouteTarget = payload;
     },
-    //#endregion 
-    SET_HSRROUTE_DATA(state, payload){
-      state.highSpeedRailwayRoute = payload
+    //#endregion
+    SET_HSRSTATION_DATA(state, payload) {
+      state.highSpeedRailwayStation = payload;
     },
+    SET_HSRROUTE_DATA(state, payload) {
+      state.highSpeedRailwayRoute = payload;
+    }
   },
   actions: {
     CREATE_TODO({ commit }, { todo }) {
@@ -203,6 +210,9 @@ export default new Vuex.Store({
     //   commit('SET_CITY', )
     // },
     //
+    READ_TOGGLE_LOADING({ commit }, isLoading) {
+      commit("TOGGLE_LOADING", isLoading);
+    },
     READ_POSITION({ commit }) {
       // 1. GET
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -270,24 +280,37 @@ export default new Vuex.Store({
     },
     //這邊我選擇在做一個
     READ_BIKETARGET_DATA({ commit, state }, searchCityIndex) {
-      commit(
-        "SET_BIKEROUTE_TARGET",
-        state.bikeRoute[searchCityIndex]
-      );
+      commit("SET_BIKEROUTE_TARGET", state.bikeRoute[searchCityIndex]);
     },
     //high speed railway
-    READ_HSRROUTE_DATA({commit, state}){
+    READ_HSRSTATION_DATA({ commit, state }) {
       axios({
         method: "get",
-        url: `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Shape?$format=JSON`,
+        url: `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station?$format=JSON`,
         headers: state.authorization
       })
-      .then(res => {
-        console.log("高鐵路線", res.data[0].Geometry);
-        commit("SET_HSRROUTE_DATA", res.data[0].Geometry)
-      })
-      .catch(err => console.log("error高鐵的路線", err));
-      
+        .then(res => {
+          console.log("高鐵站牌", res.data);
+          commit("SET_HSRSTATION_DATA", res.data);
+        })
+        .catch(err => console.log("error高鐵的站牌", err));
     },
+    READ_HSRROUTE_DATA({ commit, state }) {
+      commit("TOGGLE_LOADING", true);
+      setTimeout(() => {
+        axios({
+          method: "get",
+          url: `https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Shape?$format=JSON`,
+          headers: state.authorization
+        })
+          .then(res => {
+            console.log("高鐵路線 get...");
+            commit("SET_HSRROUTE_DATA", res.data[0].Geometry);
+            commit("TOGGLE_LOADING", false);
+          })
+          .catch(err => console.log("error高鐵的路線", err));
+      }, 2000)
+      
+    }
   }
 });

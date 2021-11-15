@@ -11,7 +11,7 @@
     <button
       type="button"
       class="showMarker btn btn-outline-warning"
-      @click="HSRroute()"
+      @click.once="HSRroute()"
     >
       顯示高鐵路線
     </button>
@@ -25,6 +25,7 @@ import store from "../store";
 import "leaflet/dist/leaflet.css";
 import Wkt from "wicket/wicket-gmap3.js";
 import cityMenu from "./cityMenu.vue";
+// import assets from "../assets"
 
 //下列是icon會出不來的解決方案
 delete L.Icon.Default.prototype._getIconUrl;
@@ -128,32 +129,69 @@ export default {
       this.map.fitBounds(this.myLayer.getBounds());
     },
     HSRroute: function() {
-      store.dispatch('READ_HSRROUTE_DATA')
-      const geometry = store.state.highSpeedRailwayRoute;
-      const wicket = new Wkt.Wkt();
-      const geojsonFeature = wicket.read(geometry).toJson();
-      // 預設樣式
-      // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
+      store.dispatch("READ_HSRSTATION_DATA");
+      store.dispatch("READ_HSRROUTE_DATA");
+      setTimeout(() => {
+        const geometry = store.state.highSpeedRailwayRoute;
+        const wicket = new Wkt.Wkt();
+        const geojsonFeature = wicket.read(geometry).toJson();
+        // 預設樣式
+        // myLayer = L.geoJSON(geojsonFeature).addTo(mymap);
 
-      //先刪除之前的紀錄
-      if (this.myLayer) {
-        this.map.removeLayer(this.myLayer);
-      }
+        //先刪除之前的紀錄
+        if (this.myLayer) {
+          this.map.removeLayer(this.myLayer);
+        }
 
-      const myStyle = {
-        color: "#CA4F0F",
-        weight: 5,
-        opacity: 0.65
-      };
-      this.myLayer = L.geoJSON(geojsonFeature, {
-        style: myStyle
-      }).addTo(this.map);
+        const myStyle = {
+          color: "#CA4F0F",
+          weight: 5,
+          opacity: 0.65
+        };
 
+        this.myLayer = L.geoJSON(geojsonFeature, {
+          style: myStyle
+        }).addTo(this.map);
 
-  
-      this.myLayer.addData(geojsonFeature);
-      // zoom the map to the layer
-      this.map.fitBounds(this.myLayer.getBounds());
+        this.myLayer.addData(geojsonFeature);
+        // zoom the map to the layer
+        this.map.fitBounds(this.myLayer.getBounds());
+
+        //HSR marker
+        var hsrIcon = L.icon({
+          iconUrl: "http://leafletjs.com/examples/custom-icons/leaf-orange.png",
+          shadowUrl:
+            "http://leafletjs.com/examples/custom-icons/leaf-shadow.png",
+
+          iconSize: [38, 75], // size of the icon
+          shadowSize: [50, 64], // size of the shadow
+          iconAnchor: [22, 74], // point of the icon which will correspond to marker's location
+          shadowAnchor: [4, 62], // the same for the shadow
+          popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+
+        store.state.highSpeedRailwayStation.forEach(item => {
+          L.marker(
+            [
+              item.StationPosition.PositionLat,
+              item.StationPosition.PositionLon
+            ],
+            { icon: hsrIcon }
+          )
+            .addTo(this.map)
+            .bindPopup(
+              `<div class="card">
+            <div class="card-body">
+                <h5 class="card-title">${item.StationName.Zh_tw}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${item.StationAddress}</h6>
+                <p class="card-text mb-0">縣市：${item.LocationCity}</p>
+                <p class="card-text mt-0">區域：${item.LocationTown}</p>
+            </div>
+        </div>`
+            );
+        });
+      }, 2100);
+      //上面2100是因為我在axios取資料時延遲2秒，為了用動畫，然後一定要比axios時間多一點WKT才會取的資料
     }
   }
 };
