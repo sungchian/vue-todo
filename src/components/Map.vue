@@ -11,9 +11,16 @@
     <button
       type="button"
       class="showMarker btn btn-outline-warning"
-      @click.once="HSRroute()"
+      @click="HSRroute()"
     >
       顯示高鐵路線
+    </button>
+    <button
+      type="button"
+      class="showMarker btn btn-outline-danger"
+      @click="cleanLayer()"
+    >
+      清除所有路線
     </button>
     <div class="mapid" id="mapid"></div>
   </div>
@@ -112,7 +119,7 @@ export default {
 
       //先刪除之前的紀錄
       if (this.myLayer) {
-        this.map.removeLayer(this.myLayer);
+        this.cleanLayer();
       }
 
       const myStyle = {
@@ -140,7 +147,7 @@ export default {
 
         //先刪除之前的紀錄
         if (this.myLayer) {
-          this.map.removeLayer(this.myLayer);
+          this.cleanLayer();
         }
 
         const myStyle = {
@@ -171,7 +178,7 @@ export default {
         });
 
         store.state.highSpeedRailwayStation.forEach(item => {
-          L.marker(
+          const marker = L.marker(
             [
               item.StationPosition.PositionLat,
               item.StationPosition.PositionLon
@@ -189,9 +196,15 @@ export default {
             </div>
         </div>`
             );
+          this.myLayer.addLayer(marker);
         });
       }, 2100);
       //上面2100是因為我在axios取資料時延遲2秒，為了用動畫，然後一定要比axios時間多一點WKT才會取的資料
+    },
+    cleanLayer: function() {
+      if (this.myLayer) {
+        this.map.removeLayer(this.myLayer);
+      }
     }
   }
 };
