@@ -12,7 +12,8 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
       <router-link to="/todo">Todo</router-link> |
-      <router-link to="/leafmap">LeafMap</router-link>
+      <router-link to="/leafmap">LeafMap</router-link> |
+      <router-link to="/expenses">Expenses</router-link> |
     </div>
     <router-view />
   </div>
@@ -20,7 +21,6 @@
 
 <script>
 import store from "./store";
-
 export default {
   computed: {
     loading: {
@@ -37,12 +37,19 @@ export default {
 </script>
 
 <style lang="scss">
+:root{
+    --bgc: #32272D;
+    --brown-lighter: #cfbdb7;
+    --brown-light: #9F918C;
+    --brown: #8D7A79;
+    
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 
 #nav {
@@ -50,8 +57,6 @@ export default {
 
   a {
     font-weight: bold;
-    color: #2c3e50;
-
     &.router-link-exact-active {
       color: #42b983;
     }
