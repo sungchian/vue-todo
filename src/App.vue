@@ -14,6 +14,7 @@
       <router-link to="/todo">Todo</router-link> |
       <router-link to="/leafmap">LeafMap</router-link> |
       <router-link to="/expenses">Expenses</router-link> |
+      <router-link to="/cantavit">Cantavit</router-link> |
     </div>
     <router-view />
   </div>
@@ -38,10 +39,24 @@ export default {
 
 <style lang="scss">
 :root{
-    --bgc: #32272D;
+    --bgc: #2A2438;
     --brown-lighter: #cfbdb7;
     --brown-light: #9F918C;
     --brown: #8D7A79;
+    --bgc-left-top: #2A2438;
+    --bgc-right-down: #575F67;
+    --gold: #B88C35;
+    --gold-light: #F8E299;
+    //#CA4246
+    //#E16541
+    //#E16541
+    //#F18F43
+    //#F18F43
+    //#8B9862
+    //#8B9862
+    //#476098
+    //#476098
+    //#A7489B
     
 }
 

@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Todo from '../views/Todo.vue'
 import LeafMap from '../views/LeafMap.vue'
 import Expenses from '../views/Expenses.vue'
+import Cantavit from '../views/Cantavit.vue'
 // import Analysis from '../views/Analysis.vue'
 
 Vue.use(VueRouter)
@@ -43,6 +44,11 @@ const routes = [
     //     component: Analysis
     //   }
     // ],
+  },
+  {
+    path: '/cantavit',
+    name: 'Cantavit',
+    component: Cantavit
   },
 ]
 

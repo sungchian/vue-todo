@@ -7,7 +7,7 @@ import jsSHA from "jssha";
 Vue.use(Vuex);
 
 const STORE = LocalStorage("todo-vue");
-// const STORE = new LocalStorage('todo-vue')
+const CANTAVIT = new LocalStorage('cantavit');
 //上下兩行是一樣的
 
 //因為是讀localStorage的資料所以要再console.log打上
@@ -18,19 +18,21 @@ export default new Vuex.Store({
   state: {
     // todos: [{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]
     todos: [],
+    //#region leafMap
     loading: false,
     position: {
       longitude: 0,
       latitude: 0
     },
     authorization: "",
-    // cityData: "",
     bikeRoute: [],
     bikeStation: [],
-    // bikeRouteTargetIndex: [],
     bikeRouteTarget: [],
     highSpeedRailwayStation: [],
-    highSpeedRailwayRoute: []
+    highSpeedRailwayRoute: [],
+    //#endregion
+    //#region Expenses
+    transactions: [],
   },
   getters: {
     list(state) {
@@ -58,21 +60,33 @@ export default new Vuex.Store({
           return todo.todo.done === status;
         });
       };
-    }
-    // filterList1 (state) {
-    //   return (filter) => {
-
-    //   }
-    // },
-    // filterList2: (state) => (filter) => {
-
-    // }
-    // currDistrictInfo(state) {
-    //   // 目前所選行政區
-    //   return (
-    //     state.cityData
-    //   );
-    // }
+    },
+    tradeDetail(state) {
+      return state.transactions.map((transaction, tNum) => {
+        return {
+          tNum,
+          transaction
+        };
+      });
+    },
+    filtertradeDetail(state, getters) {
+      return filter => {
+        let types = null;
+        switch (filter) {
+          case "all":
+            return getters.tradeDetail;
+          case "expenditure":
+            types = "expenditure";
+            break;
+          case "revenue":
+            types = "revenue";
+            break;
+        }
+        return getters.tradeDetail.filter(transaction => {
+          return transaction.transaction.types === types;
+        });
+      };
+    },
   },
   mutations: {
     SET_TODOS(state, todos) {
@@ -119,13 +133,19 @@ export default new Vuex.Store({
     SET_BIKEROUTE_TARGET(state, payload) {
       state.bikeRouteTarget = payload;
     },
-    //#endregion
     SET_HSRSTATION_DATA(state, payload) {
       state.highSpeedRailwayStation = payload;
     },
     SET_HSRROUTE_DATA(state, payload) {
       state.highSpeedRailwayRoute = payload;
-    }
+    },
+    //#endregion
+    //#region EXPENSES
+    SET_TRANSACTIONS(state, transactions) {
+      console.log(transactions);
+      state.transactions = transactions;
+    },
+    //#endregion
   },
   actions: {
     CREATE_TODO({ commit }, { todo }) {
@@ -205,14 +225,10 @@ export default new Vuex.Store({
         todos
       };
     },
-    //test
-    // READ_CITT({commit}){
-    //   commit('SET_CITY', )
-    // },
-    //
     READ_TOGGLE_LOADING({ commit }, isLoading) {
       commit("TOGGLE_LOADING", isLoading);
     },
+    //#region LeafMap
     READ_POSITION({ commit }) {
       // 1. GET
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -311,6 +327,66 @@ export default new Vuex.Store({
           .catch(err => console.log("error高鐵的路線", err));
       }, 2000)
       
-    }
-  }
+    },
+    //#endregion
+    //#region Expenses
+    CREATE_TRANSACTION({ commit }, { transaction }) {
+      // 1. POST // axios.post()
+      const transactions = CANTAVIT.load();
+      transactions.push(transaction);
+      CANTAVIT.save(transactions);
+      // 2. commit mutation
+      commit("SET_TRANSACTIONS", transactions);
+      // 3. return
+      return {
+        tNum: transactions.length - 1,
+        transaction,
+      };
+    },
+    READ_TRANSACTIONS({ commit }) {
+      // 1. GET
+      const transactions = CANTAVIT.load();
+      // 2. commit mutation
+      commit("SET_TRANSACTIONS", transactions);
+      // 3. return
+      return {
+        transactions
+      };
+    },
+    UPDATE_TRANSACTION({ commit, state }, { tNum, date, types, category, cost, ps }) {
+      // 1. PATCH axios.patch()
+      //下面這行意思是如果沒改動就直接return
+      if (state.transactions[tNum].types === types && state.transactions[tNum].category === category && state.transactions[tNum].cost === cost && state.transactions[tNum].ps === ps) return;
+      const transactions = CANTAVIT.load();
+      // todos.splice(tId, 1, todo)
+      transactions[tNum].date = new Date().toLocaleString();
+      transactions[tNum].types = "update";
+      transactions[tNum].category = category;
+      transactions[tNum].cost = cost;
+      transactions[tNum].ps = ps;
+      CANTAVIT.save(transactions);
+      // 2. commit mutation
+      commit("SET_TRANSACTIONS", transactions);
+      // 3. return
+      return {
+        tNum,
+        transaction: transactions[tNum]
+      };
+    },
+    DELETE_TRANSACTION({ commit }, { tNum }) {
+      // 1. DELETE axios.delete()
+      const transactions = CANTAVIT.load();
+      const transaction = transactions.splice(tNum, 1)[0];
+      CANTAVIT.save(transactions);
+      // 2. commit mutation
+      commit("SET_TRANSACTIONS", transactions);
+      // 3. return
+      return {
+        tNum: null,
+        transaction
+      };
+    },
+
+    //endregion
+  },
 });
