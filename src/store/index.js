@@ -3,17 +3,23 @@ import Vue from "vue";
 import Vuex from "vuex";
 import LocalStorage from "../modules/LocalStorage";
 import jsSHA from "jssha";
-
+import moment from "moment";
 Vue.use(Vuex);
 
 const STORE = LocalStorage("todo-vue");
-const CANTAVIT = new LocalStorage('cantavit');
+const CANTAVIT = new LocalStorage("cantavit");
 //上下兩行是一樣的
 
 //因為是讀localStorage的資料所以要再console.log打上
 //window.localStorage.setItem('todo-vue', JSON.stringify([{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]))
 //可用$vm0.$store.dispatch('READ_TODOS').then((res) => {console.log(res)})
 //找尋有沒有成功輸入
+
+//CREATE TODO
+//$vm0.$store.dispatch('CREATE_TODO', {tid:5,todo:{content: 999, done: true}}).then((res) => {console.log(res)})
+
+//CREATE TRANSACTION
+//$vm0.$store.dispatch('CREATE_TRANSACTION', {transaction:{type: "revenue", category: "food", cost:1111, date:"2020-12-11", datetime:4545645464, ps:"qqq"}}).then((res) => {console.log(res)})
 export default new Vuex.Store({
   state: {
     // todos: [{ content: 123, done: false }, { content: 456, done: true }, { content: 789, done: false }]
@@ -33,6 +39,25 @@ export default new Vuex.Store({
     //#endregion
     //#region Expenses
     transactions: [],
+    expenditureTypes: [
+      { en: "food", ch: "飲食" },
+      { en: "normal", ch: "日常" },
+      { en: "stay", ch: "住宿" },
+      { en: "transport", ch: "交通" },
+      { en: "entertainment", ch: "娛樂" },
+      { en: "medical", ch: "醫療" },
+      { en: "e-others", ch: "其他" },
+      { en: "e-undefined", ch: "未分類" }
+    ],
+    revenueTypes: [
+      { en: "payment", ch: "薪水" },
+      { en: "bonus", ch: "獎金" },
+      { en: "parttime", ch: "兼職" },
+      { en: "invest", ch: "投資" },
+      { en: "allowance", ch: "零用錢" },
+      { en: "r-others", ch: "其他" },
+      { en: "r-undefined", ch: "未分類" }
+    ]
   },
   getters: {
     list(state) {
@@ -86,7 +111,7 @@ export default new Vuex.Store({
           return transaction.transaction.types === types;
         });
       };
-    },
+    }
   },
   mutations: {
     SET_TODOS(state, todos) {
@@ -144,7 +169,7 @@ export default new Vuex.Store({
     SET_TRANSACTIONS(state, transactions) {
       console.log(transactions);
       state.transactions = transactions;
-    },
+    }
     //#endregion
   },
   actions: {
@@ -325,12 +350,14 @@ export default new Vuex.Store({
             commit("TOGGLE_LOADING", false);
           })
           .catch(err => console.log("error高鐵的路線", err));
-      }, 2000)
-      
+      }, 2000);
     },
     //#endregion
     //#region Expenses
     CREATE_TRANSACTION({ commit }, { transaction }) {
+      //下面兩行都可以
+      //$vm0.$store.dispatch('CREATE_TRANSACTION', {tNum:5,transaction:{type: "revenue", category: "food", cost:1111, date:"2020-12-11", datetime:4545645464, ps:"qqq"}}).then((res) => {console.log(res)})
+      //$vm0.$store.dispatch('CREATE_TRANSACTION', {transaction:{type: "revenue", category: "food", cost:1111, date:"2020-12-11", datetime:4545645464, ps:"qqq"}}).then((res) => {console.log(res)})
       // 1. POST // axios.post()
       const transactions = CANTAVIT.load();
       transactions.push(transaction);
@@ -340,7 +367,7 @@ export default new Vuex.Store({
       // 3. return
       return {
         tNum: transactions.length - 1,
-        transaction,
+        transaction
       };
     },
     READ_TRANSACTIONS({ commit }) {
@@ -353,17 +380,25 @@ export default new Vuex.Store({
         transactions
       };
     },
-    UPDATE_TRANSACTION({ commit, state }, { tNum, date, types, category, cost, ps }) {
+    UPDATE_TRANSACTION({ commit, state }, { tNum, transaction }) {
+      console.log(tNum);
       // 1. PATCH axios.patch()
       //下面這行意思是如果沒改動就直接return
-      if (state.transactions[tNum].types === types && state.transactions[tNum].category === category && state.transactions[tNum].cost === cost && state.transactions[tNum].ps === ps) return;
+      if (
+        state.transactions[tNum].type === transaction.type &&
+        state.transactions[tNum].date === transaction.date &&
+        state.transactions[tNum].category === transaction.category &&
+        state.transactions[tNum].cost === transaction.cost &&
+        state.transactions[tNum].ps === transaction.ps
+      )
+        return;
       const transactions = CANTAVIT.load();
       // todos.splice(tId, 1, todo)
-      transactions[tNum].date = new Date().toLocaleString();
-      transactions[tNum].types = "update";
-      transactions[tNum].category = category;
-      transactions[tNum].cost = cost;
-      transactions[tNum].ps = ps;
+      transactions[tNum].date = moment().format("YYYY-MM-DD");
+      transactions[tNum].type = transaction.editType;
+      transactions[tNum].category = transaction.editCategory;
+      transactions[tNum].cost = transaction.editCost;
+      transactions[tNum].ps = transaction.editPs;
       CANTAVIT.save(transactions);
       // 2. commit mutation
       commit("SET_TRANSACTIONS", transactions);
@@ -385,8 +420,8 @@ export default new Vuex.Store({
         tNum: null,
         transaction
       };
-    },
+    }
 
     //endregion
-  },
+  }
 });

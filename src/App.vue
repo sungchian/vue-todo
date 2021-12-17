@@ -13,8 +13,8 @@
       <router-link to="/about">About</router-link> |
       <router-link to="/todo">Todo</router-link> |
       <router-link to="/leafmap">LeafMap</router-link> |
-      <router-link to="/expenses">Expenses</router-link> |
       <router-link to="/cantavit">Cantavit</router-link> |
+      <router-link to="/records">Record</router-link> |
     </div>
     <router-view />
   </div>

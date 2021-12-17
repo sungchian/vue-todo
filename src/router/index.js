@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Todo from '../views/Todo.vue'
 import LeafMap from '../views/LeafMap.vue'
-import Expenses from '../views/Expenses.vue'
+import Records from '../views/Records.vue'
 import Cantavit from '../views/Cantavit.vue'
 // import Analysis from '../views/Analysis.vue'
 
@@ -34,9 +34,9 @@ const routes = [
     component: LeafMap
   },
   {
-    path: '/expenses',
-    name: 'Expenses',
-    component: Expenses,
+    path: '/records',
+    name: 'Records',
+    component: Records,
     // children: [
     //   {
     //     path: 'analysis',

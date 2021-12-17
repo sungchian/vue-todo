@@ -9,7 +9,6 @@
           type="radio"
           name=""
           value="expenditure"
-          checked="checked"
           v-model="type"
         /><span class="round button">Expenditure</span></label
       >
@@ -76,25 +75,24 @@
       <h2>Record</h2>
       <hr />
       <ul class="record-group">
-        <Record
-          v-for="record of historyRecords"
-          :key="record.index + record.category"
-          :edit="record.index === edit"
-          :currentRecord="currentRecord"
-          :records="record"
-          @check="value => checkHandler(trade.tNum, value)"
-          @editRecord="edit = record.index"
-          @editComplete="value => editCompleteHandler(trade.tNum, value)"
-          @deleteRecord="deleteRecord()"
-        />
+        <current-record
+          v-for="record of tradeDetail"
+          :key="record.tNum + record.transaction.ps"
+          :edit="record.tNum === edit"
+          :records="record.transaction"
+          :class="record.tNum + record.transaction.ps"
+          @check="value => checkHandler(record.tNum, value)"
+          @editRecord="edit = record.tNum"
+          @editComplete="value => editCompleteHandler(record.tNum, value)"
+          @deleteRecord="deleteRecord(record.tNum)"
+        ></current-record>
       </ul>
     </div>
   </div>
 </template>
 
 <script>
-import Record from "../components/Record";
-import typeButton from "../components/typeButton";
+import currentRecord from "../components/currentRecord";
 import "bootstrap/dist/css/bootstrap.min.css";
 import moment from "moment";
 export default {
@@ -129,10 +127,12 @@ export default {
       historyRecords: [],
     };
   },
-  mounted() {},
+  mounted() {
+      this.$store.dispatch('READ_TRANSACTIONS');
+  },
   computed: {
     tradeDetail() {
-      return this.$store.getters.filtertradeDetail(this.filter);
+      return this.$store.getters.tradeDetail;
     }
   },
   watch: {
@@ -147,7 +147,7 @@ export default {
     }
   },
   methods: {
-    handleSubmit() {
+     handleSubmit() {
       this.records.unshift({
         type: this.type,
         date: this.date,
@@ -157,22 +157,15 @@ export default {
         ps: this.ps
       });
 
-      if (this.historyRecords.length > 4) {
-        this.historyRecords.pop();
-      }
-      this.historyRecords.unshift({
-        type: this.type,
-        date: this.date,
-        datetime: new Date().getTime(),
-        category: this.category,
-        cost: this.cost,
-        ps: this.ps
-      });
-    }
+      this.$store.dispatch("CREATE_TRANSACTION",  {transaction:{type: this.type, category: this.category, cost: this.cost, date: this.date, datetime: new Date().getTime(), ps: this.ps}} )
+    },
+    deleteRecord(tNum) {
+        this.$store.dispatch("DELETE_TRANSACTION", {tNum});
+    },
   },
+
   components: {
-    Record,
-    typeButton
+    currentRecord,
   }
 };
 </script>
@@ -331,7 +324,7 @@ input[type="number"] {
 .record-group li {
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 4fr 1fr 0.5fr 0.5fr;
+  grid-template-columns: 2fr 2fr 2fr 1fr 4fr 0.5fr 0.5fr;
   grid-gap: 20px;
   justify-items: center;
   margin: 10px 0px;
