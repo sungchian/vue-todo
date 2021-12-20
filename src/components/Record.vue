@@ -29,6 +29,7 @@
           <option
             v-for="category in this.$store.state.expenditureTypes"
             :key="category.en"
+            :name="category.en"
             :value="category.en"
             >{{ category.ch }}</option
           >
@@ -44,6 +45,7 @@
           <option
             v-for="category in this.$store.state.revenueTypes"
             :key="category.en"
+            :name="category.en"
             :value="category.en"
             >{{ category.ch }}</option
           >
@@ -76,7 +78,7 @@ export default {
       editDate: "",
       editCategory: "",
       editCost: 0,
-      editPs: "you see this"
+      editPs: ""
     };
   },
   mounted() {
@@ -86,24 +88,18 @@ export default {
     this.editCost = this.records.cost;
     this.editPs = this.records.ps;
   },
-  computed: {
-    // content: {
-    //   get () {
-    //     return this.todo.content
-    //   },
-    //   set (value) {
-    //     this.editContent = value
-    //   }
-    // },
-    // done: {
-    //   get() {
-    //     return this.todo.done;
-    //   },
-    //   set(value) {
-    //     this.$emit("check", value);
-    //   }
-    // }
-  }
+  watch: {
+      editType(val) {
+          this.editType = val;
+          this.records.type = val;
+          if(this.records.type === "expenditure"){
+              this.editCategory = "e-undefined";
+          }
+          else{
+              this.editCategory = "r-undefined";
+          }
+      },
+  },
 };
 </script>
 
@@ -114,6 +110,11 @@ export default {
 
 ul {
   padding: 0;
+}
+
+.exp-route .router-link-exact-active{
+    font-weight: bold;
+    color: var(--gold-light)
 }
 
 .record-btn {
@@ -138,4 +139,6 @@ ul {
 .record-ps {
   background-color: #ebe0ff;
 }
+
+
 </style>

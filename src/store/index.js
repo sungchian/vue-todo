@@ -108,7 +108,7 @@ export default new Vuex.Store({
             break;
         }
         return getters.tradeDetail.filter(transaction => {
-          return transaction.transaction.types === types;
+          return transaction.transaction.type === types;
         });
       };
     }
@@ -381,20 +381,20 @@ export default new Vuex.Store({
       };
     },
     UPDATE_TRANSACTION({ commit, state }, { tNum, transaction }) {
-      console.log(tNum);
       // 1. PATCH axios.patch()
       //下面這行意思是如果沒改動就直接return
       if (
-        state.transactions[tNum].type === transaction.type &&
-        state.transactions[tNum].date === transaction.date &&
-        state.transactions[tNum].category === transaction.category &&
-        state.transactions[tNum].cost === transaction.cost &&
-        state.transactions[tNum].ps === transaction.ps
-      )
+        state.transactions[tNum].type === transaction.editType &&
+        state.transactions[tNum].date === transaction.editDate &&
+        state.transactions[tNum].category === transaction.editCategory &&
+        state.transactions[tNum].cost === transaction.editCost &&
+        state.transactions[tNum].ps === transaction.editPs
+      ) {
         return;
+      }
       const transactions = CANTAVIT.load();
       // todos.splice(tId, 1, todo)
-      transactions[tNum].date = moment().format("YYYY-MM-DD");
+      transactions[tNum].date = transaction.editDate;
       transactions[tNum].type = transaction.editType;
       transactions[tNum].category = transaction.editCategory;
       transactions[tNum].cost = transaction.editCost;

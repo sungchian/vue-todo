@@ -5,12 +5,10 @@
     <!-- !! -->
     <div class="exp-route mb-20">
       <label class="mr-20"
-        ><input
-          type="radio"
-          name=""
-          value="expenditure"
-          v-model="type"
-        /><span class="round button">Expenditure</span></label
+        ><input type="radio" name="" value="expenditure" v-model="type" /><span
+          class="round button"
+          >Expenditure</span
+        ></label
       >
       |
       <label class="ml-20">
@@ -24,7 +22,7 @@
       <div class="mb-20">Category :</div>
       <div v-if="type === 'expenditure'" class="exp-types mb-20">
         <label
-          v-for="expenditureType in expenditureTypes"
+          v-for="expenditureType in this.$store.state.expenditureTypes"
           :key="expenditureType.en"
         >
           <input
@@ -39,7 +37,10 @@
       </div>
 
       <div v-else class="rev-types mb-20">
-        <label v-for="revenueType in revenueTypes" :key="revenueType.en">
+        <label
+          v-for="revenueType in this.$store.state.revenueTypes"
+          :key="revenueType.en"
+        >
           <input
             type="radio"
             name=""
@@ -53,15 +54,29 @@
 
       <template v-if="type === 'expenditure'">
         <div>Cost :</div>
-        <input class="mb-20" type="number" name="cost" v-model="cost" />
+        <input
+          class="mb-20"
+          type="number"
+          name="cost"
+          v-model="cost"
+          oninput="if(value.length > 8)value = value.slice(0, 8)" placeholder="花費"
+          required
+        />
         <div>P.S. :</div>
-        <input class="mb-20" type="text" v-model="ps" />
+        <input class="mb-20" type="text" v-model="ps" oninput="if(value.length > 11)value = value.slice(0, 11)" placeholder="備註" required />
       </template>
       <template v-else>
         <div>Earn :</div>
-        <input class="mb-20" type="number" name="earn" v-model="cost" />
+        <input
+          class="mb-20"
+          type="number"
+          name="earn"
+          v-model="cost"
+          oninput="if(value.length > 8)value = value.slice(0, 8)" placeholder="收入"
+          required
+        />
         <div>P.S. :</div>
-        <input class="mb-20" type="text" v-model="ps" />
+        <input class="mb-20" type="text" v-model="ps" oninput="if(value.length > 11)value = value.slice(0, 11)" placeholder="備註" required />
       </template>
 
       <div v-if="type === 'expenditure'">
@@ -80,8 +95,6 @@
           :key="record.tNum + record.transaction.ps"
           :edit="record.tNum === edit"
           :records="record.transaction"
-          :class="record.tNum + record.transaction.ps"
-          @check="value => checkHandler(record.tNum, value)"
           @editRecord="edit = record.tNum"
           @editComplete="value => editCompleteHandler(record.tNum, value)"
           @deleteRecord="deleteRecord(record.tNum)"
@@ -104,35 +117,16 @@ export default {
       category: "undefined",
       cost: "",
       ps: "",
-      expenditureTypes: [
-        { en: "food", ch: "飲食" },
-        { en: "normal", ch: "日常" },
-        { en: "stay", ch: "住宿" },
-        { en: "transport", ch: "交通" },
-        { en: "entertainment", ch: "娛樂" },
-        { en: "medical", ch: "醫療" },
-        { en: "e-others", ch: "其他" },
-        { en: "e-undefined", ch: "未分類" }
-      ],
-      revenueTypes: [
-        { en: "payment", ch: "薪水" },
-        { en: "bonus", ch: "獎金" },
-        { en: "parttime", ch: "兼職" },
-        { en: "invest", ch: "投資" },
-        { en: "allowance", ch: "零用錢" },
-        { en: "r-others", ch: "其他" },
-        { en: "r-undefined", ch: "未分類" }
-      ],
       records: [],
-      historyRecords: [],
+      historyRecords: []
     };
   },
   mounted() {
-      this.$store.dispatch('READ_TRANSACTIONS');
+    this.$store.dispatch("READ_TRANSACTIONS");
   },
   computed: {
     tradeDetail() {
-      return this.$store.getters.tradeDetail;
+      return this.$store.getters.tradeDetail.reverse();
     }
   },
   watch: {
@@ -147,7 +141,12 @@ export default {
     }
   },
   methods: {
-     handleSubmit() {
+    handleSubmit() {
+      if (this.type === "expenditure" && this.category === "undefined") {
+        this.category = "e-undefined";
+      } else {
+        this.category = "r-undefined";
+      }
       this.records.unshift({
         type: this.type,
         date: this.date,
@@ -157,15 +156,30 @@ export default {
         ps: this.ps
       });
 
-      this.$store.dispatch("CREATE_TRANSACTION",  {transaction:{type: this.type, category: this.category, cost: this.cost, date: this.date, datetime: new Date().getTime(), ps: this.ps}} )
+      this.$store.dispatch("CREATE_TRANSACTION", {
+        transaction: {
+          type: this.type,
+          category: this.category,
+          cost: this.cost,
+          date: this.date,
+          datetime: new Date().getTime(),
+          ps: this.ps
+        }
+      });
+
+      this.type = "expenditure";
+      this.date = moment().format("YYYY-MM-DD");
+      this.category = "undefined";
+      this.cost = "";
+      this.ps = "";
     },
     deleteRecord(tNum) {
-        this.$store.dispatch("DELETE_TRANSACTION", {tNum});
-    },
+      this.$store.dispatch("DELETE_TRANSACTION", { tNum });
+    }
   },
 
   components: {
-    currentRecord,
+    currentRecord
   }
 };
 </script>
@@ -258,6 +272,7 @@ input[type="number"] {
   border: solid 2px #f18a9b;
   color: var(--gold-light);
   cursor: default;
+  user-select: none;
 }
 
 .exp-route .button,
@@ -324,7 +339,7 @@ input[type="number"] {
 .record-group li {
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 1fr 4fr 0.5fr 0.5fr;
+  grid-template-columns: 2fr 2fr 2fr 1fr 4fr;
   grid-gap: 20px;
   justify-items: center;
   margin: 10px 0px;

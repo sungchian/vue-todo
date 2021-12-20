@@ -27,7 +27,7 @@
 
 <script>
 import Record from "../components/Record";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 export default {
   data() {
     return {
@@ -35,10 +35,12 @@ export default {
       edit: null,
     };
   },
-  mounted() {},
+  mounted() {
+    this.$store.dispatch('READ_TRANSACTIONS');
+  },
   computed: {
     tradeDetail() {
-      return this.$store.getters.filtertradeDetail(this.filter);
+      return this.$store.getters.filtertradeDetail(this.filter).reverse();
     }
   },
   watch: {
@@ -55,9 +57,9 @@ export default {
   methods: {
     //下面兩個參數名稱要跟index.js的名稱一樣!!!
     editCompleteHandler(tNum, transaction) {
-      console.log(transaction);
       this.edit = null;
       this.$store.dispatch("UPDATE_TRANSACTION", { tNum, transaction });
+      
     },
     deleteRecord(tNum) {
         this.$store.dispatch("DELETE_TRANSACTION", {tNum});
@@ -150,7 +152,7 @@ input {
 .record-group li {
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 1fr 4fr 0.5fr 0.5fr;
+  grid-template-columns: 2fr 2fr 2fr 1.5fr 4fr 0.5fr 0.5fr;
   grid-gap: 20px;
   justify-items: center;
   margin: 10px 0px;
