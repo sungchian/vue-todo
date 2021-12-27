@@ -5,6 +5,7 @@ import Todo from '../views/Todo.vue'
 import LeafMap from '../views/LeafMap.vue'
 import Records from '../views/Records.vue'
 import Cantavit from '../views/Cantavit.vue'
+import Analysis from '../views/Analysis.vue'
 // import Analysis from '../views/Analysis.vue'
 
 Vue.use(VueRouter)
@@ -49,6 +50,11 @@ const routes = [
     path: '/cantavit',
     name: 'Cantavit',
     component: Cantavit
+  },
+  {
+    path: '/analysis',
+    name: 'Analysis',
+    component: Analysis
   },
 ]
 

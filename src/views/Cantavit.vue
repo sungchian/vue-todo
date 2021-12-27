@@ -59,11 +59,19 @@
           type="number"
           name="cost"
           v-model="cost"
-          oninput="if(value.length > 8)value = value.slice(0, 8)" placeholder="花費"
+          oninput="if(value.length > 8)value = value.slice(0, 8)"
+          placeholder="花費"
           required
         />
         <div>P.S. :</div>
-        <input class="mb-20" type="text" v-model="ps" oninput="if(value.length > 11)value = value.slice(0, 11)" placeholder="備註" required />
+        <input
+          class="mb-20"
+          type="text"
+          v-model="ps"
+          oninput="if(value.length > 11)value = value.slice(0, 11)"
+          placeholder="備註"
+          required
+        />
       </template>
       <template v-else>
         <div>Earn :</div>
@@ -72,11 +80,19 @@
           type="number"
           name="earn"
           v-model="cost"
-          oninput="if(value.length > 8)value = value.slice(0, 8)" placeholder="收入"
+          oninput="if(value.length > 8)value = value.slice(0, 8)"
+          placeholder="收入"
           required
         />
         <div>P.S. :</div>
-        <input class="mb-20" type="text" v-model="ps" oninput="if(value.length > 11)value = value.slice(0, 11)" placeholder="備註" required />
+        <input
+          class="mb-20"
+          type="text"
+          v-model="ps"
+          oninput="if(value.length > 11)value = value.slice(0, 11)"
+          placeholder="備註"
+          required
+        />
       </template>
 
       <div v-if="type === 'expenditure'">
@@ -118,15 +134,110 @@ export default {
       cost: "",
       ps: "",
       records: [],
-      historyRecords: []
+      historyRecords: [],
+      expenditureCost: {
+        food: 0,
+        normal: 0,
+        stay: 0,
+        transport: 0,
+        entertainment: 0,
+        medical: 0,
+        eOthers: 0,
+        eUndefined: 0
+      },
+      revenueEarn: {
+        payment: 0,
+        bonus: 0,
+        parttime: 0,
+        invest: 0,
+        allowance: 0,
+        rOthers: 0,
+        rUndefined: 0
+      }
     };
   },
   mounted() {
     this.$store.dispatch("READ_TRANSACTIONS");
+
+    for (let i in this.$store.getters.tradeDetail) {
+      if (
+        this.$store.getters.tradeDetail[i].transaction.type === "expenditure"
+      ) {
+        switch (this.$store.getters.tradeDetail[i].transaction.category) {
+          case "food":
+            this.expenditureCost.food += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "normal":
+            this.expenditureCost.normal += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "stay":
+            this.expenditureCost.stay += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "transport":
+            this.expenditureCost.transport += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "entertainment":
+            this.expenditureCost.entertainment += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "medical":
+            this.expenditureCost.medical += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-others":
+            this.expenditureCost.eOthers += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-undefined":
+            this.expenditureCost.eUndefined += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else if (
+        this.$store.getters.tradeDetail[i].transaction.type === "revenue"
+      ) {
+        this.revenueEarn += parseInt(
+          this.$store.getters.tradeDetail[i].transaction.cost
+        );
+      }
+    }
+    this.$store.dispatch("COUNT_EXPENDITURE_COST", this.expenditureCost);
+    this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
   },
   computed: {
     tradeDetail() {
-      return this.$store.getters.tradeDetail.reverse();
+      return this.$store.getters.top5tradeDeatail;
     }
   },
   watch: {
@@ -144,7 +255,7 @@ export default {
     handleSubmit() {
       if (this.type === "expenditure" && this.category === "undefined") {
         this.category = "e-undefined";
-      } else {
+      } else if (this.type === "revenue" && this.category === "undefined") {
         this.category = "r-undefined";
       }
       this.records.unshift({
@@ -167,11 +278,112 @@ export default {
         }
       });
 
+      if (this.type === "expenditure") {
+        switch (this.category) {
+          case "food":
+            this.expenditureCost.food += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "normal":
+            this.expenditureCost.normal += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "stay":
+            this.expenditureCost.stay += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "transport":
+            this.expenditureCost.transport += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "entertainment":
+            this.expenditureCost.entertainment += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "medical":
+            this.expenditureCost.medical += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-others":
+            this.expenditureCost.eOthers += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-undefined":
+            this.expenditureCost.eUndefined += parseInt(this.cost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else if (this.type === "revenue") {
+        switch (this.category) {
+          case "payment":
+            this.revenueEarn.payment += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "bonus":
+            this.revenueEarn.bonus += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "parttime":
+            this.revenueEarn.parttime += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "invest":
+            this.revenueEarn.invest += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "allowance":
+            this.revenueEarn.allowance += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-others":
+            this.revenueEarn.rOthers += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-undefined":
+            this.revenueEarn.rUndefined += parseInt(this.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else {
+        return;
+      }
+
       this.type = "expenditure";
       this.date = moment().format("YYYY-MM-DD");
       this.category = "undefined";
       this.cost = "";
       this.ps = "";
+
     },
     deleteRecord(tNum) {
       this.$store.dispatch("DELETE_TRANSACTION", { tNum });
@@ -268,7 +480,6 @@ input[type="number"] {
 }
 .exp-types input:checked + .button,
 .rev-types input:checked + .button {
-  /* padding: 25px; */
   border: solid 2px #f18a9b;
   color: var(--gold-light);
   cursor: default;
@@ -319,7 +530,7 @@ input[type="number"] {
   text-align: center;
   transition: 1s;
   background-size: 200% auto;
-  color: white;
+  color: rgb(255, 255, 255);
   border-radius: 5px;
 }
 
@@ -339,7 +550,7 @@ input[type="number"] {
 .record-group li {
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 1fr 4fr;
+  grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 4fr;
   grid-gap: 20px;
   justify-items: center;
   margin: 10px 0px;

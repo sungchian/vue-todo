@@ -57,16 +57,38 @@ export default new Vuex.Store({
       { en: "allowance", ch: "零用錢" },
       { en: "r-others", ch: "其他" },
       { en: "r-undefined", ch: "未分類" }
-    ]
+    ],
+    expenditureCost: {
+      food: 0,
+      normal: 0,
+      stay: 0,
+      transport: 0,
+      entertainment: 0,
+      medical: 0,
+      eOthers: 0,
+      eUndefined: 0
+    },
+    revenueEarn: {
+      payment: 0,
+      bonus: 0,
+      parttime: 0,
+      invest: 0,
+      allowance: 0,
+      rOthers: 0,
+      rUndefined: 0
+    },
+    costDifference: 0,
   },
   getters: {
     list(state) {
-      return state.todos.map((todo, tId) => {
-        return {
-          tId,
-          todo
-        };
-      });
+      if(state.todos){
+        return state.todos.map((todo, tId) => {
+          return {
+            tId,
+            todo
+          };
+        });
+      }
     },
     filterList(state, getters) {
       return filter => {
@@ -87,12 +109,15 @@ export default new Vuex.Store({
       };
     },
     tradeDetail(state) {
-      return state.transactions.map((transaction, tNum) => {
-        return {
-          tNum,
-          transaction
-        };
-      });
+      if(state.transactions){
+        return state.transactions.map((transaction, tNum) => {
+          return {
+            tNum,
+            transaction
+          };
+        });
+      }
+      
     },
     filtertradeDetail(state, getters) {
       return filter => {
@@ -111,7 +136,12 @@ export default new Vuex.Store({
           return transaction.transaction.type === types;
         });
       };
-    }
+    },
+    top5tradeDeatail(state, getters) {
+      if(getters.tradeDetail){
+        return getters.tradeDetail.reverse().slice(0, 5); 
+      }
+    },
   },
   mutations: {
     SET_TODOS(state, todos) {
@@ -167,9 +197,17 @@ export default new Vuex.Store({
     //#endregion
     //#region EXPENSES
     SET_TRANSACTIONS(state, transactions) {
-      console.log(transactions);
       state.transactions = transactions;
-    }
+    },
+    //#endregion
+    //#region EXPENSES
+    SET_ExpenditureCost(state, expenditureCost) {
+      console.log(expenditureCost);
+      state.expenditureCost = expenditureCost;
+    },
+    SET_RevenueEarn(state, earn) {
+      state.revenueEarn = earn;
+    },
     //#endregion
   },
   actions: {
@@ -359,7 +397,7 @@ export default new Vuex.Store({
       //$vm0.$store.dispatch('CREATE_TRANSACTION', {tNum:5,transaction:{type: "revenue", category: "food", cost:1111, date:"2020-12-11", datetime:4545645464, ps:"qqq"}}).then((res) => {console.log(res)})
       //$vm0.$store.dispatch('CREATE_TRANSACTION', {transaction:{type: "revenue", category: "food", cost:1111, date:"2020-12-11", datetime:4545645464, ps:"qqq"}}).then((res) => {console.log(res)})
       // 1. POST // axios.post()
-      const transactions = CANTAVIT.load();
+      const transactions = CANTAVIT.load() || [];
       transactions.push(transaction);
       CANTAVIT.save(transactions);
       // 2. commit mutation
@@ -420,8 +458,14 @@ export default new Vuex.Store({
         tNum: null,
         transaction
       };
-    }
-
-    //endregion
+    },
+    //#endregion
+    COUNT_EXPENDITURE_COST({commit}, expenditureCost) {
+      console.log(expenditureCost);
+      commit("SET_ExpenditureCost", expenditureCost);
+    },
+    COUNT_REVENUE_EARN({commit}, revenueEarn) {
+      commit("SET_RevenueEarn", revenueEarn);
+    },
   }
 });

@@ -14,15 +14,15 @@
       </button>
     </template>
     <template v-else>
-      <select class="form-select" name="" id="edit-type" v-model="editType">
+      <select class="edit-mode edit-type" name="" v-model="editType">
         <option value="expenditure">Expenditure</option>
         <option value="revenue">Revenue</option>
       </select>
-      <input type="date" v-model="editDate" />
-      <template v-if="records.type==='expenditure'">
+      <input class="edit-mode edit-date" type="date" v-model="editDate" />
+      <template v-if="records.type === 'expenditure'">
         <select
-          class="form-select"
-          id="edit-type"
+          class="edit-mode edit-category"
+          id="edit-category"
           aria-label="選擇下拉選單"
           v-model="editCategory"
         >
@@ -37,8 +37,8 @@
       </template>
       <template v-else>
         <select
-          class="form-select"
-          id="edit-type"
+          class="edit-mode edit-category"
+          id="edit-category"
           aria-label="選擇下拉選單"
           v-model="editCategory"
         >
@@ -52,9 +52,23 @@
         </select>
       </template>
 
-      <input type="tel" v-model="editCost" />
-      <input type="text" v-model="editPs" />
-      <button @click="$emit('editComplete', {editType, editDate, editCategory, editCost, editPs})">完成</button>
+      <input class="edit-mode edit-cost" type="number" v-model.lazy="editCost" />
+      <input class="edit-mode edit-ps" type="text" v-model.lazy="editPs" />
+      <button
+        class="edit-mode edit-complete"
+        @click="
+          $emit('editComplete', {
+            editType,
+            editDate,
+            editCategory,
+            editCost,
+            editPs,
+          })
+        "
+      >
+        完成
+      </button>
+      <button class="edit-mode" @click="edit = false">取消</button>
     </template>
   </li>
 </template>
@@ -74,11 +88,11 @@ export default {
   data() {
     return {
       transactions: {},
-      editType: "",
+      editType: this.records.type,
       editDate: "",
       editCategory: "",
-      editCost: 0,
-      editPs: ""
+      editCost: this.records.cost,
+      editPs: "",
     };
   },
   mounted() {
@@ -89,17 +103,20 @@ export default {
     this.editPs = this.records.ps;
   },
   watch: {
-      editType(val) {
-          this.editType = val;
-          this.records.type = val;
-          if(this.records.type === "expenditure"){
-              this.editCategory = "e-undefined";
-          }
-          else{
-              this.editCategory = "r-undefined";
-          }
+    editType: {
+      handler(newval, oldval) {
+        console.log(newval);
+        this.editType = newval;
+        this.records.type = newval;
+        if (this.records.type === "expenditure") {
+          this.editCategory = "e-undefined";
+        } else {
+          this.editCategory = "r-undefined";
+        }
       },
-  },
+      immediate: false
+    },
+  }
 };
 </script>
 
@@ -112,9 +129,9 @@ ul {
   padding: 0;
 }
 
-.exp-route .router-link-exact-active{
-    font-weight: bold;
-    color: var(--gold-light)
+.exp-route .router-link-exact-active {
+  font-weight: bold;
+  color: var(--gold-light);
 }
 
 .record-btn {
@@ -123,22 +140,39 @@ ul {
   margin: 5px 10px;
   width: 100%;
   text-transform: capitalize;
+  cursor: default !important;
 }
-.record-type {
+.record-btn.record-type {
   background-color: #ffe0e5;
 }
-.record-date {
+.record-btn.record-date {
   background-color: #daecfc;
 }
-.record-category {
+.record-btn.record-category {
   background-color: #fff5df;
 }
-.record-cost {
+.record-btn.record-cost {
   background-color: #ddf3f2;
 }
-.record-ps {
+.record-btn.record-ps {
   background-color: #ebe0ff;
 }
+.record-btn.record-edit {
+  cursor: pointer !important;
+}
+.record-btn.record-delete {
+  cursor: pointer !important;
+}
 
+.edit-mode {
+  border: 0;
+  border-radius: 5px;
+  margin: 5px 10px;
+  width: 100%;
+  text-align: center;
+}
 
+.edit-complete {
+  /* width: 150%; */
+}
 </style>

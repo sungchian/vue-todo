@@ -6,8 +6,6 @@
       <button class="record-btn record-category">{{records.category}}</button>
       <button class="record-btn record-cost">{{records.cost}}</button>
       <button class="record-btn record-ps">{{records.ps}}</button>
-      <!-- <button class="record-btn record-edit" @click="$emit('editThis')">Edit</button>
-      <button class="record-btn record-delete" @click="$emit('deleteRecord')">Delete</button> -->
     </template>
     <template v-else>
       <input type="text" v-model="editContent" v-focus="editContent" />
@@ -55,18 +53,6 @@ export default {
     //   }
     // }
   }
-  //   data () {
-  //     return {
-  //       editingTodo: {
-  //         content: '',
-  //         done: false
-  //       }
-  //     }
-  //   },
-  //   mounted () {
-  //     this.editingTodo.content = this.todo.content
-  //     this.editingTodo.done = this.todo.done
-  //   }
 };
 </script>
 

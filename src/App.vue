@@ -15,6 +15,7 @@
       <router-link to="/leafmap">LeafMap</router-link> |
       <router-link to="/cantavit">Cantavit</router-link> |
       <router-link to="/records">Record</router-link> |
+      <router-link to="/analysis">Analysis</router-link> |
     </div>
     <router-view />
   </div>

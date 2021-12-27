@@ -4,12 +4,28 @@
     <hr class="mb-20" style="background-color: white" />
     <div class="exp-route mb-20">
       <router-link to="/records" replace>All</router-link>｜
-      <router-link to="/records?filter=expenditure" replace>Expenditure</router-link>｜
-      <router-link :to="{ name: 'Records', query: { filter: 'revenue' } }" replace>Revenue</router-link>
+      <router-link to="/records?filter=expenditure" replace
+        >Expenditure</router-link
+      >｜
+      <router-link
+        :to="{ name: 'Records', query: { filter: 'revenue' } }"
+        replace
+        >Revenue</router-link
+      >
     </div>
     <hr class="mb-20" style="background-color: white; width: 80%" />
     <div class="record-container">
       <ul class="record-group">
+        <li>
+          <button class="record-btn">支出 / 收入</button>
+          <button class="record-btn">日期</button>
+          <button class="record-btn">種類</button>
+          <button class="record-btn">金額</button>
+          <button class="record-btn">備註</button>
+          <button class="record-btn">Edit</button>
+          <button class="record-btn">Delete</button>
+        </li>
+        <li><hr /></li>
         <Record
           v-for="record of tradeDetail"
           :key="record.tNum + record.transaction.ps"
@@ -33,14 +49,123 @@ export default {
     return {
       filter: "all", // all,expenditure,revenue
       edit: null,
+      expenditureCost: {
+        food: 0,
+        normal: 0,
+        stay: 0,
+        transport: 0,
+        entertainment: 0,
+        medical: 0,
+        eOthers: 0,
+        eUndefined: 0
+      },
+      revenueEarn: {
+        payment: 0,
+        bonus: 0,
+        parttime: 0,
+        invest: 0,
+        allowance: 0,
+        rOthers: 0,
+        rUndefined: 0
+      }
     };
   },
   mounted() {
-    this.$store.dispatch('READ_TRANSACTIONS');
+    this.$store.dispatch("READ_TRANSACTIONS");
+
+    for (let i in this.$store.getters.tradeDetail) {
+      if (
+        this.$store.getters.tradeDetail[i].transaction.type === "expenditure"
+      ) {
+        switch (this.$store.getters.tradeDetail[i].transaction.category) {
+          case "food":
+            this.expenditureCost.food += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "normal":
+            this.expenditureCost.normal += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "stay":
+            this.expenditureCost.stay += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "transport":
+            this.expenditureCost.transport += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "entertainment":
+            this.expenditureCost.entertainment += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "medical":
+            this.expenditureCost.medical += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-others":
+            this.expenditureCost.eOthers += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-undefined":
+            this.expenditureCost.eUndefined += parseInt(
+              this.$store.getters.tradeDetail[i].transaction.cost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else if (
+        this.$store.getters.tradeDetail[i].transaction.type === "revenue"
+      ) {
+        this.revenueEarn += parseInt(
+          this.$store.getters.tradeDetail[i].transaction.cost
+        );
+      }
+    }
   },
   computed: {
     tradeDetail() {
-      return this.$store.getters.filtertradeDetail(this.filter).reverse();
+      return this.$store.getters.filtertradeDetail(this.filter);
     }
   },
   watch: {
@@ -57,16 +182,118 @@ export default {
   methods: {
     //下面兩個參數名稱要跟index.js的名稱一樣!!!
     editCompleteHandler(tNum, transaction) {
+      console.log(transaction);
       this.edit = null;
       this.$store.dispatch("UPDATE_TRANSACTION", { tNum, transaction });
-      
+
+      if (transaction.editType === "expenditure") {
+        switch (transaction.editCategory) {
+          case "food":
+            this.expenditureCost.food = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "normal":
+            this.expenditureCost.normal = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "stay":
+            this.expenditureCost.stay = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "transport":
+            this.expenditureCost.transport = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "entertainment":
+            this.expenditureCost.entertainment = parseInt(
+              transaction.editCost
+            );
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "medical":
+            this.expenditureCost.medical = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-others":
+            this.expenditureCost.eOthers = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          case "e-undefined":
+            this.expenditureCost.eUndefined = parseInt(transaction.editCost);
+            this.$store.dispatch(
+              "COUNT_EXPENDITURE_COST",
+              this.expenditureCost
+            );
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else if (transaction.type === "revenue") {
+        switch (transaction.category) {
+          case "payment":
+            this.revenueEarn.payment = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "bonus":
+            this.revenueEarn.bonus = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "parttime":
+            this.revenueEarn.parttime = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "invest":
+            this.revenueEarn.invest = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "allowance":
+            this.revenueEarn.allowance = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-others":
+            this.revenueEarn.rOthers = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-undefined":
+            this.revenueEarn.rUndefined = parseInt(transaction.editCost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      } else {
+        return;
+      }
     },
     deleteRecord(tNum) {
-        this.$store.dispatch("DELETE_TRANSACTION", {tNum});
-    },
+      this.$store.dispatch("DELETE_TRANSACTION", { tNum });
+    }
   },
   components: {
-    Record,
+    Record
   }
 };
 </script>
@@ -77,7 +304,7 @@ export default {
 /* all style */
 * {
   margin: 0 auto;
-  padding: 0;
+  /* padding: 0; */
   text-decoration: none;
   list-style: none;
   font-family: "Cherry Swash", cursive;
