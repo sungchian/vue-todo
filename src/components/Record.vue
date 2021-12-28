@@ -6,7 +6,7 @@
       <button class="record-btn record-category">{{ records.category }}</button>
       <button class="record-btn record-cost">{{ records.cost }}</button>
       <button class="record-btn record-ps">{{ records.ps }}</button>
-      <button class="record-btn record-edit" @click="$emit('editRecord')">
+      <button class="record-btn record-edit" @click="$emit('editRecord', records.cost)">
         Edit
       </button>
       <button class="record-btn record-delete" @click="$emit('deleteRecord')">
@@ -52,8 +52,8 @@
         </select>
       </template>
 
-      <input class="edit-mode edit-cost" type="number" v-model.lazy="editCost" />
-      <input class="edit-mode edit-ps" type="text" v-model.lazy="editPs" />
+      <input class="edit-mode edit-cost" type="number" min="0" oninput="if(value.length > 8)value = value.slice(0, 8)" v-model.lazy="editCost" />
+      <input class="edit-mode edit-ps" type="text" maxlength="8" v-model.lazy="editPs" />
       <button
         class="edit-mode edit-complete"
         @click="

@@ -1,19 +1,19 @@
 <script>
 import { Doughnut } from "vue-chartjs";
 import store from "../store";
+import DoughnutChartVue from './DoughnutChart.vue';
 
 export default {
-  extends: Doughnut,
+  extends: DoughnutChartVue ,
   data() {
     return {
       chartData: {
         labels: [
-          "Food",
-          "Normal",
-          "Stay",
-          "Transport",
-          "Entertainment",
-          "Medical",
+          "Payment",
+          "Bonus",
+          "PartTime",
+          "Invest",
+          "Allowance",
           "Others",
           "Undefined"
         ],
@@ -26,7 +26,6 @@ export default {
               "rgba(255, 206, 86, 1)",
               "rgba(10, 233, 122, 1)",
               "rgba(54, 162, 235, 1)",
-              "rgba(255, 150, 173, 1)",
               "rgba(153, 102, 255, 1)",
               "rgba(100, 100, 100, 1)"
             ],
@@ -36,35 +35,32 @@ export default {
               "rgba(255, 206, 86, 0.2)",
               "rgba(10, 233, 122, 0.2)",
               "rgba(54, 162, 235, 0.2)",
-              "rgba(255, 150, 173, 0.2)",
               "rgba(153, 102, 255, 0.2)",
               "rgba(100, 100, 100, 0.2)"
             ],
             data: [
-              parseInt(store.state.expenditureCost.food),
-              parseInt(store.state.expenditureCost.normal),
-              parseInt(store.state.expenditureCost.stay),
-              parseInt(store.state.expenditureCost.transport),
-              parseInt(store.state.expenditureCost.entertainment),
-              parseInt(store.state.expenditureCost.medical),
-              parseInt(store.state.expenditureCost.eOthers),
-              parseInt(store.state.expenditureCost.eUndefined)
+              parseInt(store.state.revenueEarn.payment),
+              parseInt(store.state.revenueEarn.bonus),
+              parseInt(store.state.revenueEarn.parttime),
+              parseInt(store.state.revenueEarn.invest),
+              parseInt(store.state.revenueEarn.allowance),
+              parseInt(store.state.revenueEarn.rOthers),
+              parseInt(store.state.revenueEarn.rUndefined),
             ]
           }
         ]
       },
-      options: {
-        legend: {
-          display: true
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      },
+    //   options: {
+    //     legend: {
+    //       display: true
+    //     },
+    //     responsive: true,
+    //     maintainAspectRatio: false
+    //   }
     };
   },
   mounted() {
     this.renderChart(this.chartData, this.options);
-    
   }
 };
 </script>

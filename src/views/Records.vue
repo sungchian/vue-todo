@@ -26,13 +26,14 @@
           <button class="record-btn">Delete</button>
         </li>
         <li><hr /></li>
+        <!-- @editRecord="edit = record.tNum" -->
         <Record
           v-for="record of tradeDetail"
           :key="record.tNum + record.transaction.ps"
           :edit="record.tNum === edit"
           :records="record.transaction"
           :class="record.tNum + record.transaction.ps"
-          @editRecord="edit = record.tNum"
+          @editRecord="oldCost => editHandler(record.tNum, oldCost)"
           @editComplete="value => editCompleteHandler(record.tNum, value)"
           @deleteRecord="deleteRecord(record.tNum)"
         />
@@ -49,6 +50,7 @@ export default {
     return {
       filter: "all", // all,expenditure,revenue
       edit: null,
+      oldCost: 0,
       expenditureCost: {
         food: 0,
         normal: 0,
@@ -157,9 +159,41 @@ export default {
       } else if (
         this.$store.getters.tradeDetail[i].transaction.type === "revenue"
       ) {
-        this.revenueEarn += parseInt(
-          this.$store.getters.tradeDetail[i].transaction.cost
-        );
+        switch (this.$store.getters.tradeDetail[i].transaction.category) {
+          case "payment":
+            this.revenueEarn.payment += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "bonus":
+            this.revenueEarn.bonus += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "parttime":
+            this.revenueEarn.parttime += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "invest":
+            this.revenueEarn.invest += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "allowance":
+            this.revenueEarn.allowance += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-others":
+            this.revenueEarn.rOthers += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-undefined":
+            this.revenueEarn.rUndefined += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
+      }else{
+        alert("system failed");
       }
     }
   },
@@ -180,6 +214,10 @@ export default {
     }
   },
   methods: {
+    editHandler(tNum, oldCost) {
+      this.edit = tNum;
+      this.oldCost = oldCost;
+    },
     //下面兩個參數名稱要跟index.js的名稱一樣!!!
     editCompleteHandler(tNum, transaction) {
       console.log(transaction);
@@ -189,58 +227,56 @@ export default {
       if (transaction.editType === "expenditure") {
         switch (transaction.editCategory) {
           case "food":
-            this.expenditureCost.food = parseInt(transaction.editCost);
+            this.expenditureCost.food = this.expenditureCost.food - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "normal":
-            this.expenditureCost.normal = parseInt(transaction.editCost);
+            this.expenditureCost.normal = this.expenditureCost.normal - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "stay":
-            this.expenditureCost.stay = parseInt(transaction.editCost);
+            this.expenditureCost.stay = this.expenditureCost.stay - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "transport":
-            this.expenditureCost.transport = parseInt(transaction.editCost);
+            this.expenditureCost.transport = this.expenditureCost.transport - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "entertainment":
-            this.expenditureCost.entertainment = parseInt(
-              transaction.editCost
-            );
+            this.expenditureCost.entertainment = this.expenditureCost.entertainment - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "medical":
-            this.expenditureCost.medical = parseInt(transaction.editCost);
+            this.expenditureCost.medical = this.expenditureCost.medical - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "e-others":
-            this.expenditureCost.eOthers = parseInt(transaction.editCost);
+            this.expenditureCost.eOthers = this.expenditureCost.eOthers - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
             );
             break;
           case "e-undefined":
-            this.expenditureCost.eUndefined = parseInt(transaction.editCost);
+            this.expenditureCost.eUndefined = this.expenditureCost.eUndefined - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch(
               "COUNT_EXPENDITURE_COST",
               this.expenditureCost
@@ -250,34 +286,34 @@ export default {
             console.log("wrong");
             break;
         }
-      } else if (transaction.type === "revenue") {
-        switch (transaction.category) {
+      } else if (transaction.editType === "revenue") {
+        switch (transaction.editCategory) {
           case "payment":
-            this.revenueEarn.payment = parseInt(transaction.editCost);
+            this.revenueEarn.payment = this.revenueEarn.payment - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "bonus":
-            this.revenueEarn.bonus = parseInt(transaction.editCost);
+            this.revenueEarn.bonus = this.revenueEarn.bonus - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "parttime":
-            this.revenueEarn.parttime = parseInt(transaction.editCost);
+            this.revenueEarn.parttime = this.revenueEarn.parttime - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "invest":
-            this.revenueEarn.invest = parseInt(transaction.editCost);
+            this.revenueEarn.invest = this.revenueEarn.invest - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "allowance":
-            this.revenueEarn.allowance = parseInt(transaction.editCost);
+            this.revenueEarn.allowance = this.revenueEarn.allowance - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "r-others":
-            this.revenueEarn.rOthers = parseInt(transaction.editCost);
+            this.revenueEarn.rOthers = this.revenueEarn.rOthers - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           case "r-undefined":
-            this.revenueEarn.rUndefined = parseInt(transaction.editCost);
+            this.revenueEarn.rUndefined = this.revenueEarn.rUndefined - this.oldCost + parseInt(transaction.editCost);
             this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
             break;
           default:
@@ -285,6 +321,7 @@ export default {
             break;
         }
       } else {
+        alert("update failed");
         return;
       }
     },
@@ -320,14 +357,6 @@ input {
 
 .block {
   display: flex;
-}
-
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.mb-50 {
-  margin-bottom: 50px;
 }
 
 .container * {

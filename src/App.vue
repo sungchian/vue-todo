@@ -78,6 +78,14 @@ export default {
     }
   }
 }
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mb-50 {
+  margin-bottom: 50px;
+}
 </style>
 
 <style scoped>

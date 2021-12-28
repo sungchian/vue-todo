@@ -77,7 +77,6 @@ export default new Vuex.Store({
       rOthers: 0,
       rUndefined: 0
     },
-    costDifference: 0,
   },
   getters: {
     list(state) {
@@ -202,7 +201,6 @@ export default new Vuex.Store({
     //#endregion
     //#region EXPENSES
     SET_ExpenditureCost(state, expenditureCost) {
-      console.log(expenditureCost);
       state.expenditureCost = expenditureCost;
     },
     SET_RevenueEarn(state, earn) {
@@ -461,7 +459,6 @@ export default new Vuex.Store({
     },
     //#endregion
     COUNT_EXPENDITURE_COST({commit}, expenditureCost) {
-      console.log(expenditureCost);
       commit("SET_ExpenditureCost", expenditureCost);
     },
     COUNT_REVENUE_EARN({commit}, revenueEarn) {

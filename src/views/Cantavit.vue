@@ -227,9 +227,39 @@ export default {
       } else if (
         this.$store.getters.tradeDetail[i].transaction.type === "revenue"
       ) {
-        this.revenueEarn += parseInt(
-          this.$store.getters.tradeDetail[i].transaction.cost
-        );
+        switch (this.$store.getters.tradeDetail[i].transaction.category) {
+          case "payment":
+            this.revenueEarn.payment += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "bonus":
+            this.revenueEarn.bonus += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "parttime":
+            this.revenueEarn.parttime += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "invest":
+            this.revenueEarn.invest += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "allowance":
+            this.revenueEarn.allowance += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-others":
+            this.revenueEarn.rOthers += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          case "r-undefined":
+            this.revenueEarn.rUndefined += parseInt(this.$store.getters.tradeDetail[i].transaction.cost);
+            this.$store.dispatch("COUNT_REVENUE_EARN", this.revenueEarn);
+            break;
+          default:
+            console.log("wrong");
+            break;
+        }
       }
     }
     this.$store.dispatch("COUNT_EXPENDITURE_COST", this.expenditureCost);
