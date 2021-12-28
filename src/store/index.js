@@ -141,6 +141,12 @@ export default new Vuex.Store({
         return getters.tradeDetail.reverse().slice(0, 5); 
       }
     },
+    //待完成
+    timetradeDetail(state, getters) {
+      return month => {
+        let startTime = '1990-01-01';
+      } 
+    },
   },
   mutations: {
     SET_TODOS(state, todos) {
