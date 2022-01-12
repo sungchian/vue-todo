@@ -1,2 +1,2 @@
 # vue-todo
-詳見master分支
+https://sungchian.github.io/vue-todo/
